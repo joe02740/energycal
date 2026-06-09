@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { Container, Gauge, Users2, Upload, ArrowRight } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -15,6 +16,34 @@ import type {
   Prover,
 } from "@/lib/data/types";
 import { QuickStart } from "./_components/QuickStart";
+
+const TILES = [
+  {
+    href: "/proving/can",
+    title: "Can proving",
+    desc: "Open-can / tank prover. Live A–P, branded certificate.",
+    icon: Container,
+    accent: true,
+  },
+  {
+    href: "/proving/new",
+    title: "Meter proving",
+    desc: "Ball / SVP prover wizard with live MF and acceptance gates.",
+    icon: Gauge,
+  },
+  {
+    href: "/manage",
+    title: "Manage roster",
+    desc: "People, customers, sites, and provers — edit once, reuse everywhere.",
+    icon: Users2,
+  },
+  {
+    href: "/import",
+    title: "Import data",
+    desc: "Pull in historical provings and records.",
+    icon: Upload,
+  },
+];
 
 export default function Home() {
   const tenant = useCurrentTenant();
@@ -53,74 +82,83 @@ export default function Home() {
     };
   }, [tenant.id]);
 
+  const brandName = tenant.branding.displayName ?? tenant.name;
+
   return (
     <main className="mx-auto max-w-5xl px-6 py-10">
-      <header className="mb-8">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Field-first proving
-        </h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Custody-transfer meter calibration with live MF, four-gate acceptance, and
-          tamper-evident certificates.
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Operating as <span className="font-medium">{tenant.branding.displayName ?? tenant.name}</span>.
-        </p>
+      {/* Hero */}
+      <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Field-first proving</h1>
+          <p className="mt-2 max-w-xl text-sm text-muted-foreground">
+            Custody-transfer meter calibration with live meter factors, can &amp; ball provers, and
+            tamper-evident certificates — built to replace the spreadsheet and the clunky desktop tool.
+          </p>
+          <p className="mt-2 text-xs text-muted-foreground">
+            Operating as <span className="font-medium text-foreground">{brandName}</span>.
+          </p>
+        </div>
+        {tenant.branding.logoUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={tenant.branding.logoUrl} alt={brandName} className="h-12 w-auto self-start sm:self-center" />
+        ) : null}
       </header>
 
-      <div className="grid gap-6 sm:grid-cols-3">
-        <Card className="sm:col-span-2">
-          <CardHeader>
-            <CardTitle>Start a proving</CardTitle>
-            <CardDescription>
-              Pick a meter to jump straight into the wizard, or start clean and select inside.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <QuickStart
-              customers={customers}
-              locations={locations}
-              meters={meters}
-              provers={provers}
-              products={products}
-            />
-            <Separator />
-            <div className="flex items-center gap-3">
-              <Link href="/proving/new" className={buttonVariants()}>
-                Start clean
-              </Link>
-              <p className="text-xs text-muted-foreground">
-                Build it up step by step from the wizard.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>History</CardTitle>
-            <CardDescription>
-              Browse past provings, search by meter or customer.{" "}
-              <span className="text-muted-foreground">(coming soon)</span>
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <button
-              disabled
-              className={buttonVariants({ variant: "secondary" })}
-              aria-disabled
+      {/* Action tiles */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {TILES.map((t) => {
+          const Icon = t.icon;
+          return (
+            <Link
+              key={t.href}
+              href={t.href}
+              className={`group flex flex-col rounded-xl border p-4 transition-colors hover:bg-muted/50 ${
+                t.accent ? "border-primary/40 bg-primary/[0.04]" : ""
+              }`}
             >
-              Browse
-            </button>
-          </CardContent>
-        </Card>
+              <div className="mb-2 flex items-center justify-between">
+                <Icon className={`h-5 w-5 ${t.accent ? "text-primary" : "text-muted-foreground"}`} />
+                <ArrowRight className="h-4 w-4 -translate-x-1 text-muted-foreground opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100" />
+              </div>
+              <div className="text-sm font-semibold">{t.title}</div>
+              <div className="mt-1 text-xs text-muted-foreground">{t.desc}</div>
+            </Link>
+          );
+        })}
       </div>
+
+      {/* Quick start (pick a meter → ball wizard) */}
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Jump into a meter proving</CardTitle>
+          <CardDescription>
+            Pick a meter to start the ball/SVP wizard pre-filled, or start clean and select inside.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <QuickStart
+            customers={customers}
+            locations={locations}
+            meters={meters}
+            provers={provers}
+            products={products}
+          />
+          <Separator />
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/proving/new" className={buttonVariants({ variant: "secondary" })}>
+              Start clean
+            </Link>
+            <Link href="/proving/can" className={buttonVariants()}>
+              New can proving
+            </Link>
+            <p className="text-xs text-muted-foreground">Can provings are manual entry — no meter selection needed.</p>
+          </div>
+        </CardContent>
+      </Card>
 
       {customers.length > 0 && (
         <section className="mt-10">
-          <h2 className="mb-3 text-sm font-medium text-muted-foreground">
-            Customers
-          </h2>
+          <h2 className="mb-3 text-sm font-medium text-muted-foreground">Customers</h2>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {customers.map((c) => {
               const customerMeters = meters.filter((m) => m.customerId === c.id);
@@ -128,7 +166,7 @@ export default function Home() {
                 <Link
                   key={c.id}
                   href={`/customers/${c.id}`}
-                  className="rounded-lg border p-3 hover:bg-muted/50 transition-colors"
+                  className="rounded-lg border p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className="font-medium">{c.name}</div>
                   <div className="mt-0.5 text-xs text-muted-foreground">
@@ -141,11 +179,9 @@ export default function Home() {
         </section>
       )}
 
-      {meters.length > 0 ? (
+      {meters.length > 0 && (
         <section className="mt-10">
-          <h2 className="mb-3 text-sm font-medium text-muted-foreground">
-            Recent meters
-          </h2>
+          <h2 className="mb-3 text-sm font-medium text-muted-foreground">Recent meters</h2>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {meters.slice(0, 6).map((m) => {
               const customer = customers.find((c) => c.id === m.customerId);
@@ -159,27 +195,19 @@ export default function Home() {
                 <Link
                   key={m.id}
                   href={`/proving/new?${params.toString()}`}
-                  className="rounded-lg border p-3 hover:bg-muted/50 transition-colors"
+                  className="rounded-lg border p-3 transition-colors hover:bg-muted/50"
                 >
                   <div className="font-medium">{m.tag}</div>
                   <div className="mt-0.5 text-xs text-muted-foreground">
                     {customer?.name}{location ? ` · ${location.name}` : ""}
                   </div>
                   {m.description && (
-                    <div className="mt-0.5 text-xs text-muted-foreground truncate">
-                      {m.description}
-                    </div>
+                    <div className="mt-0.5 truncate text-xs text-muted-foreground">{m.description}</div>
                   )}
                 </Link>
               );
             })}
           </div>
-        </section>
-      ) : (
-        <section className="mt-10 rounded-lg border border-dashed p-6 text-center">
-          <p className="text-sm text-muted-foreground">
-            No meters yet for {tenant.branding.displayName ?? tenant.name}. Add one from the wizard.
-          </p>
         </section>
       )}
 

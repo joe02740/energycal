@@ -4,9 +4,12 @@
 
 export interface TenantBranding {
   displayName?: string;
+  legalName?: string; // full legal entity name for certificates (e.g. "Quorum Calibration LLC")
   accentColor?: string; // CSS color; applied as --primary CSS variable override
   logoUrl?: string;
   contactEmail?: string;
+  contactPhone?: string;
+  contactAddress?: string;
   defaultAssumptions?: {
     throughputGalDay?: number;
     pricePerGal?: number;

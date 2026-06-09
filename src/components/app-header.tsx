@@ -6,7 +6,7 @@ import { BackButton } from "./back-button";
 
 export function AppHeader() {
   return (
-    <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
+    <header className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70 print:hidden">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-2 px-6">
         <div className="flex min-w-0 items-center gap-1">
           <BackButton />
@@ -27,6 +27,20 @@ export function AppHeader() {
           </Link>
           <span className="mx-1 text-muted-foreground/40">·</span>
           <Link
+            href="/proving/can"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Can proving
+          </Link>
+          <span className="mx-1 text-muted-foreground/40">·</span>
+          <Link
+            href="/manage"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Manage
+          </Link>
+          <span className="mx-1 text-muted-foreground/40">·</span>
+          <Link
             href="/import"
             className="text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -34,6 +48,13 @@ export function AppHeader() {
           </Link>
           <span className="mx-1 text-muted-foreground/40">·</span>
           <span className="text-muted-foreground/60">History</span>
+          <span className="mx-1 text-muted-foreground/40">·</span>
+          <Link
+            href="/piu-diagnostics"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+          >
+            PIU Diagnostics
+          </Link>
           <div className="ml-2 flex items-center gap-1">
             <TenantSwitcher />
             <ThemeToggle />

@@ -5,6 +5,7 @@
 
 import type {
   AcceptanceProfile,
+  Contact,
   Customer,
   Location,
   Meter,
@@ -150,6 +151,7 @@ const acceptanceProfiles: AcceptanceProfile[] = [
 
 export const mockSeed = {
   customers,
+  contacts: [] as Contact[],
   locations,
   products,
   meters,

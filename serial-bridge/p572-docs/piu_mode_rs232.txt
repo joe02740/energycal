@@ -1,0 +1,59 @@
+                        PC Running
+                                                                                                                                                             COM3 is used for the Modbus Master, configure the 
+
+                          PROVEit                                                                                                                                                               RMU serial port to match the Densitomer serial Port
+
+                                                                                                                                                                                                using the Serial setup web page, shown below:
+                                RS232
+                                                                                                                                      COM3-RS422
+                                                COM1                                                                                 wired as RS485
+
+                              RMU in PIU Mode                                                                                                                                               NOTE:
+
+                                                                                                                                                                                            To access the Pressure correction setup page, add:
+
+                                                                                Scaling                                                                                                      /cdm100.cgi after the IP address in the browser, as
+                                                                               Function                                                                                                     shown below.
+
+                        Detector
+                                 Launch
+                                                  Meter Temp
+                                                             Meter Pressure
+                                                                        Prover Temp
+                                                                                   Prover Pressure
+                                                                                              (Analog Density)
+
+                                                                                                         Meter
+
+                                                                                                             Pulses
+                                                                                                                     Density Meter
+
+                                                                                                                         Pulses
+
+                        Digital           Analog                          Pulse
+                          I/O             Inputs                          Inputs
+
+                                           Density output can be as an        CDM100                                                 This drawing may not be
+                                                                          Pulse or Analog                                            reproduced without the
+                                          analog or a frequency (period)  Density Output                                             consent of Newflow Ltd
+
+
+4
+                                                                                                                                      © Newflow Ltd 2023
+
+
+3
+                                                                                                                                   Title: RMU providing pressure information to
+                                                                                                                                            Densitometer.
+
+2
+
+                                                                                                                                     Drg No. P572 ps1
+1
+                                                                                                                                   Sheet 1 of 1
+
+0
+ 13 March 23 MOB DGS  Initial Release
+
+Rev  Date  Drawn Chk'd App'd Description
+

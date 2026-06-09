@@ -10,8 +10,12 @@ export const SEED_TENANTS: Tenant[] = [
     name: "Quorum Calibration",
     branding: {
       displayName: "Quorum Calibration",
-      accentColor: "#0ea5e9",
-      contactEmail: "measurement@quorumcal.example",
+      legalName: "Quorum Calibration LLC",
+      accentColor: "#13294b", // navy from the logo
+      contactEmail: "info@qcalibration.net",
+      contactPhone: "361-449-8833",
+      contactAddress: "1869 N Hwy 37 Access Rd, George West, TX 78022",
+      logoUrl: "/quorum-logo.png",
       defaultAssumptions: {
         throughputGalDay: 100_000,
         pricePerGal: 2.0,

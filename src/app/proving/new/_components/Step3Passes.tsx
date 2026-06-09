@@ -34,10 +34,6 @@ export function Step3Passes({
     prover?.proverType === "tank_can_open_neck" ||
     prover?.proverType === "master_meter";
 
-  // For v0: no PIU connection yet; the table is manual entry but the framing
-  // is set up so v1 can stream pulses from the prover/meter and auto-fill rows.
-  const isLiveModeAvailable = false;
-
   return (
     <Card>
       <CardHeader>
@@ -45,7 +41,7 @@ export function Step3Passes({
           <span>Passes</span>
           <Badge variant="secondary" className="font-normal">
             <Radio className="mr-1 h-3 w-3" />
-            Live mode {isLiveModeAvailable ? "available" : "(v1 — PIU streaming)"}
+            Live capture — RMU
           </Badge>
         </CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -55,9 +51,10 @@ export function Step3Passes({
               <span className="font-medium">{prover.tag}</span>. Pulse mode{" "}
               <span className="font-medium">{meter.pulseMode}</span> · K ={" "}
               <span className="font-medium">{meter.nominalKFactor}</span> pulses/gal.{" "}
-              In v1, pulse counts will stream from the {prover.piuCommType ?? "PIU"} connection
-              and per-pass MF/repeatability will populate as each pass completes; the live
-              sidebar will recalculate in real time. For v0, enter values manually.
+              Connect the RMU in the panel below (PIU over RS-232, or Modbus) and{" "}
+              <span className="font-medium">Capture pass</span> snapshots Tp/Pp/Tm/Pm straight into a
+              row — the live sidebar recalculates in real time. Pulse auto-capture lands once the
+              prove-run mapping is in; enter pulses manually until then.
             </>
           ) : (
             "Select a meter and prover first."

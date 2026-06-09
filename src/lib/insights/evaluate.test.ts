@@ -11,7 +11,6 @@ function obs(
     meterId: "m1",
     productId: "p1",
     datePerformed: new Date(partial.date),
-    mf: partial.mf,
     cmf: null,
     repeatabilityPct: 0.02,
     priorDeviationPct: null,

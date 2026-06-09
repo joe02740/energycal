@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# portable bundle output
+/dist/
+
+# nested node_modules (e.g. serial-bridge/) — reinstallable
+node_modules/

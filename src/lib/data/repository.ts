@@ -7,6 +7,7 @@
 
 import type {
   AcceptanceProfile,
+  Contact,
   Customer,
   Location,
   Meter,
@@ -17,8 +18,17 @@ import type {
 import { mockSeed } from "./mock-seed";
 import { dynamicStore } from "./store";
 
+function newId(prefix: string): string {
+  const rand =
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now().toString(36)}${Math.floor(Math.random() * 1e9).toString(36)}`;
+  return `${prefix}-${rand}`;
+}
+
 export interface Repository {
   listCustomers(): Promise<Customer[]>;
+  listContacts(): Promise<Contact[]>;
   listLocations(customerId: string): Promise<Location[]>;
   listLocationsAll(): Promise<Location[]>;
   listMeters(customerId: string, locationId: string): Promise<Meter[]>;
@@ -30,6 +40,19 @@ export interface Repository {
   getProduct(productId: string): Promise<Product | null>;
   listAcceptanceProfiles(): Promise<AcceptanceProfile[]>;
   getAcceptanceProfile(id: string): Promise<AcceptanceProfile | null>;
+
+  // Creates (field roster — id minted here, persisted via the dynamic store)
+  createCustomer(input: Omit<Customer, "id" | "companyId">): Promise<Customer>;
+  createContact(input: Omit<Contact, "id" | "companyId">): Promise<Contact>;
+  createLocation(input: Omit<Location, "id" | "companyId">): Promise<Location>;
+  createProver(input: Omit<Prover, "id" | "companyId">): Promise<Prover>;
+
+  // Edits (overlay over seed via the dynamic store) + tombstone delete
+  updateCustomer(row: Customer): Promise<Customer>;
+  updateContact(row: Contact): Promise<Contact>;
+  updateLocation(row: Location): Promise<Location>;
+  updateProver(row: Prover): Promise<Prover>;
+  deleteEntity(id: string): Promise<void>;
 
   // Provings
   listProvings(filter?: {
@@ -50,16 +73,22 @@ class InMemoryRepository implements Repository {
     if (!row) return null;
     return row.companyId === this.tenantId ? row : null;
   }
-  // Merge seed (static) with dynamic store (imported + user-created). Dedupe by id, dynamic wins.
+  // Merge seed (static) with dynamic store (imported + user-created). Dedupe by id,
+  // dynamic wins, then drop tombstoned ids so deletes hide both seed + dynamic rows.
   private merge<T extends { id: string }>(seed: T[], dyn: T[]): T[] {
+    const deleted = new Set(dynamicStore.deletedIds());
     const map = new Map<string, T>();
     for (const r of seed) map.set(r.id, r);
     for (const r of dyn) map.set(r.id, r);
-    return [...map.values()];
+    return [...map.values()].filter((r) => !deleted.has(r.id));
   }
 
   async listCustomers() {
     return this.inTenant(this.merge(mockSeed.customers, dynamicStore.customers()));
+  }
+  async listContacts() {
+    const seedContacts: Contact[] = mockSeed.contacts ?? [];
+    return this.inTenant(this.merge(seedContacts, dynamicStore.contacts()));
   }
   async listLocations(customerId: string) {
     return this.inTenant(this.merge(mockSeed.locations, dynamicStore.locations()))
@@ -98,6 +127,47 @@ class InMemoryRepository implements Repository {
   }
   async getAcceptanceProfile(id: string) {
     return this.oneInTenant(mockSeed.acceptanceProfiles.find((p) => p.id === id));
+  }
+
+  async createCustomer(input: Omit<Customer, "id" | "companyId">) {
+    const row: Customer = { ...input, id: newId("cust"), companyId: this.tenantId };
+    dynamicStore.upsertCustomer(row);
+    return row;
+  }
+  async createContact(input: Omit<Contact, "id" | "companyId">) {
+    const row: Contact = { ...input, id: newId("contact"), companyId: this.tenantId };
+    dynamicStore.upsertContact(row);
+    return row;
+  }
+  async createLocation(input: Omit<Location, "id" | "companyId">) {
+    const row: Location = { ...input, id: newId("loc"), companyId: this.tenantId };
+    dynamicStore.upsertLocation(row);
+    return row;
+  }
+  async createProver(input: Omit<Prover, "id" | "companyId">) {
+    const row: Prover = { ...input, id: newId("prover"), companyId: this.tenantId };
+    dynamicStore.upsertProver(row);
+    return row;
+  }
+
+  async updateCustomer(row: Customer) {
+    dynamicStore.upsertCustomer({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async updateContact(row: Contact) {
+    dynamicStore.upsertContact({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async updateLocation(row: Location) {
+    dynamicStore.upsertLocation({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async updateProver(row: Prover) {
+    dynamicStore.upsertProver({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async deleteEntity(id: string) {
+    dynamicStore.markDeleted(id);
   }
 
   async listProvings(filter?: {

@@ -1,0 +1,2575 @@
+=== MBMAP PAGE 1 ===
+NEWFLOW LTD
+George House
+Derwent Road
+Malton
+UK
+YO17 6YB
+P572 Modbus Address Map Manual
+Rev
+Date
+Changes
+Prepared
+Checked
+Authorized
+0
+26 Nov 2019
+Original release
+MOB
+DGS
+1
+2
+Proprietary Statement
+This document, submitted in confidence contains proprietary information, which shall not be reproduced or
+transferred to others without prior written permission of Newflow Limited.
+Copyright (C) Newflow 2019
+
+=== MBMAP PAGE 2 ===
+Table of Contents
+Introduction
+ 
+                                                                                                                                                                    
+ 
+ 
+...................................................................................................................................................................
+ 
+ 4  
+Overview
+ 
+                                                                                                                                                                  
+ 
+ 
+.................................................................................................................................................................
+ 
+ 4  
+Software description
+ 
+                                                                                                                                                 
+ 
+ 
+................................................................................................................................................
+ 
+ 4  
+Turnaround Delay
+ 
+                                                                                                                                                     
+ 
+ 
+....................................................................................................................................................
+ 
+ 4  
+Modbus Maps
+ 
+                                                                                                                                                                 
+ 
+ 
+................................................................................................................................................................
+ 
+ 4  
+Scaled 32 Bit Integer Modbus Slave Map
+ 
+                                                                                                                     
+ 
+ 
+....................................................................................................................
+ 
+ 5  
+Tabular View
+ 
+                                                                                                                                                            
+ 
+ 
+...........................................................................................................................................................
+ 
+ 5  
+Register Description
+ 
+                                                                                                                                                 
+ 
+ 
+................................................................................................................................................
+ 
+ 7  
+Register 2000 (Read-Only) : P513 Hardware Version
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 7  
+Register 2002 (Read-Only) : P513 Software Version
+ 
+                                                                                        
+ 
+ 
+.......................................................................................
+ 
+ 7  
+Register 2004 (Read-Only) : P572 Firmware Version
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 7  
+Register 2006 (Read-Only) : Reserved
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 7  
+Register 2008 (Read-Only) : System Status
+ 
+                                                                                                       
+ 
+ 
+......................................................................................................
+ 
+ 7  
+Register 2010 (Read-Only) : Digital Inputs
+ 
+                                                                                                        
+ 
+ 
+.......................................................................................................
+ 
+ 8  
+Register 2012 (Read-Only) : Prover Status
+ 
+                                                                                                        
+ 
+ 
+.......................................................................................................
+ 
+ 8  
+Register 2014 (Read-Only) : FPGA Message Count
+ 
+                                                                                          
+ 
+ 
+.........................................................................................
+ 
+ 9  
+Register 2016 (Read-Only) : Reserved
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 9  
+Register 2018 (Read-Only) : Good / A pulse count
+ 
+                                                                                           
+ 
+ 
+..........................................................................................
+ 
+ 9  
+Register 2020 (Read-Only) : Reserved
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 9  
+Register 2022 (Read-Only) : Bad / B pulse count
+ 
+                                                                                              
+ 
+ 
+.............................................................................................
+ 
+ 9  
+Register 2024 (Read-Only) : Reserved
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 9  
+Register 2026 (Read-Only) : RAWIN pulse count
+ 
+                                                                                             
+ 
+ 
+............................................................................................
+ 
+ 9  
+Register 2028 (Read-Only) : Prover PULSEIN
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 9  
+Register 2030 (Read-Only) : Prover PULSEIN SW1-2 Count
+ 
+                                                                          
+ 
+ 
+.........................................................................
+ 
+ 9  
+Register 2032 (Read-Only) : Prover Time SW1-2
+ 
+                                                                                           
+ 
+ 
+..........................................................................................
+ 
+ 10
+  
+Register 2034 (Read-Only) : Prover Time P1-N1
+ 
+                                                                                            
+ 
+ 
+...........................................................................................
+ 
+ 10
+  
+Register 2036 (Read-Only) : Reserved
+ 
+                                                                                                             
+ 
+ 
+............................................................................................................
+ 
+ 10
+  
+Register 2038 (Read-Only) : Good / A frequency
+ 
+                                                                                            
+ 
+ 
+...........................................................................................
+ 
+ 10
+  
+Register 2040 (Read-Only) : Bad / B frequency
+ 
+                                                                                              
+ 
+ 
+.............................................................................................
+ 
+ 10
+  
+Register 2042 (Read-Only) : RAWIN frequency
+ 
+                                                                                             
+ 
+ 
+............................................................................................
+ 
+ 10
+  
+Register 2044 (Read-Only) : Reserved
+ 
+                                                                                                             
+ 
+ 
+............................................................................................................
+ 
+ 10
+  
+Register 2046 (Read-Only) : Density 1 period
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 10
+  
+Register 2048 (Read-Only) : Density 2 period
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 10
+  
+Register 2050 (Read-Only) : Reserved
+ 
+                                                                                                             
+ 
+ 
+............................................................................................................
+ 
+ 10
+  
+Register 2052 (Read-Only) : Analogue Input 1
+ 
+                                                                                                
+ 
+ 
+...............................................................................................
+ 
+ 10
+  
+Register 2054 (Read-Only) : Analogue Input 2
+ 
+                                                                                                
+ 
+ 
+...............................................................................................
+ 
+ 11
+  
+Register 2056 (Read-Only) : Analogue Input 3
+ 
+                                                                                                
+ 
+ 
+...............................................................................................
+ 
+ 11
+  
+Register 2058 (Read-Only) : Analogue Input 4
+ 
+                                                                                                
+ 
+ 
+...............................................................................................
+ 
+ 11
+  
+Register 2060 (Read-Only) : Analogue Input 5/PRT2
+ 
+                                                                                     
+ 
+ 
+....................................................................................
+ 
+ 11
+  
+Register 2062 (Read-Only) : Analogue Input 6/PRT1
+ 
+                                                                                     
+ 
+ 
+....................................................................................
+ 
+ 11
+  
+Register 2064 (Read-Only) : Analog Channel Status
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 11
+  
+Register 2066 (Read-Only) : Reserved
+ 
+                                                                                                             
+ 
+ 
+............................................................................................................
+ 
+ 11
+  
+Register 2068 (Read/Write) : DAC 1
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 11
+  
+Register 2070 (Read/Write) : DAC 2
+ 
+                                                                                                               
+ 
+ 
+..............................................................................................................
+ 
+ 12
+  
+Register 2072 (Read/Write) : Digital Outputs
+ 
+                                                                                                  
+ 
+ 
+.................................................................................................
+ 
+ 12
+  
+Register 2074 (Read/Write) : Pulse Output 1 bucket
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 12
+  
+Register 2076 (Read/Write) : Pulse Output 2 bucket
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 12
+  
+Register 2078 (Read/Write): Prover Configuration
+ 
+                                                                                          
+ 
+ 
+.........................................................................................
+ 
+ 12
+  
+Register 2080 (Read-Only) : Reserved
+ 
+                                                                                                             
+ 
+ 
+............................................................................................................
+ 
+ 13
+  
+Register 2082 (Read/Write) : Purge Pulse Output #1
+ 
+                                                                                      
+ 
+ 
+.....................................................................................
+ 
+ 13
+  
+Register 2084 (Read/Write) : Purge Pulse Output #2
+ 
+                                                                                      
+ 
+ 
+.....................................................................................
+ 
+ 13
+  
+Register 2086 (Read/Write) : System Config (Non-Volatile)
+ 
+                                                                          
+ 
+ 
+.........................................................................
+ 
+ 14
+  
+Register 2088 (Read/Write) : System Config (Non-Volatile)
+ 
+                                                                          
+ 
+ 
+.........................................................................
+ 
+ 14
+  
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 2 of 31
+
+=== MBMAP PAGE 3 ===
+Register 2090 (Read/Write) : Pulse Output 1 period (Non-Volatile)
+ 
+                                                               
+ 
+ 
+..............................................................
+ 
+ 15
+  
+Register 2092 (Read/Write) : Pulse Output 2 period (Non-Volatile)
+ 
+                                                               
+ 
+ 
+..............................................................
+ 
+ 15
+  
+Register 2094 (Read/Write) : Prover OneShot Count (Non-Volatile)
+ 
+                                                             
+ 
+ 
+............................................................
+ 
+ 15
+  
+Register 2096 (Read/Write) : RAWOUT Mode
+ 
+                                                                                               
+ 
+ 
+..............................................................................................
+ 
+ 15
+  
+Register 2098 (Read/Write) : Prover Source Selection
+ 
+                                                                                    
+ 
+ 
+...................................................................................
+ 
+ 16
+  
+Legacy Mixed Format Modbus Slave Map
+ 
+                                                                                                                 
+ 
+ 
+................................................................................................................
+ 
+ 17
+  
+Read-Only Registers
+ 
+                                                                                                                                               
+ 
+ 
+..............................................................................................................................................
+ 
+ 17
+  
+Register 0 (Read-Only, Int32) : System Status
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 18
+  
+Register 2 (Read-Only, Int32) : Digital Inputs
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 18
+  
+Register 4 (Read-Only, Int32) : Message Id
+ 
+                                                                                                     
+ 
+ 
+....................................................................................................
+ 
+ 18
+  
+Register 6 (Read-Only, Int32) : Good / A pulse count
+ 
+                                                                                     
+ 
+ 
+....................................................................................
+ 
+ 18
+  
+Register 8 (Read-Only, Int32) : Bad / B pulse count
+ 
+                                                                                       
+ 
+ 
+......................................................................................
+ 
+ 18
+  
+Register 10 (Read-Only, Int32) : RAWIN pulse count
+ 
+                                                                                    
+ 
+ 
+...................................................................................
+ 
+ 19
+  
+Register 12 (Read-Only, Int32) : Prover Status
+ 
+                                                                                                
+ 
+ 
+...............................................................................................
+ 
+ 19
+  
+Register 14 (Read-Only, Int32) : Prover PULSEIN
+ 
+                                                                                         
+ 
+ 
+........................................................................................
+ 
+ 20
+  
+Register 16 (Read-Only, Int32) : Prover PULSEIN SW1-2
+ 
+                                                                            
+ 
+ 
+...........................................................................
+ 
+ 20
+  
+Register 18 (Read-Only, Int32) : Prover Time SW1-2
+ 
+                                                                                     
+ 
+ 
+....................................................................................
+ 
+ 20
+  
+Register 20 (Read-Only, Int32) : Prover Time P1-N1
+ 
+                                                                                     
+ 
+ 
+....................................................................................
+ 
+ 21
+  
+Register 22 (Read-Only, Int32) : P513 Hardware Version
+ 
+                                                                              
+ 
+ 
+.............................................................................
+ 
+ 21
+  
+Register 24 (Read-Only, Int32) : P513 Software Version
+ 
+                                                                                
+ 
+ 
+...............................................................................
+ 
+ 21
+  
+Register 26 (Read-Only) : P517 Firmware Version
+ 
+                                                                                         
+ 
+ 
+........................................................................................
+ 
+ 21
+  
+Register 28 (Read-Only, Int32) : [Reserved]
+ 
+                                                                                                    
+ 
+ 
+...................................................................................................
+ 
+ 21
+  
+Register 1000 (Read-Only, Float32) : Good / A frequency
+ 
+                                                                             
+ 
+ 
+............................................................................
+ 
+ 22
+  
+Register 1002 (Read-Only, Float32) : Bad / B frequency
+ 
+                                                                                
+ 
+ 
+...............................................................................
+ 
+ 22
+  
+Register 1004 (Read-Only, Float32) : RAWIN frequency
+ 
+                                                                               
+ 
+ 
+..............................................................................
+ 
+ 22
+  
+Register 1006 (Read-Only, Float32) : Density 1 period
+ 
+                                                                                   
+ 
+ 
+..................................................................................
+ 
+ 22
+  
+Register 1008 (Read-Only, Float32) : Density 2 period
+ 
+                                                                                   
+ 
+ 
+..................................................................................
+ 
+ 22
+  
+Register 1010 (Read-Only, Float32) : Analogue Input 1
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 22
+  
+Register 1012 (Read-Only, Float32) : Analogue Input 2
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 22
+  
+Register 1014 (Read-Only, Float32) : Analogue Input 3
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 22
+  
+Register 1016 (Read-Only, Float32) : Analogue Input 4
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 22
+  
+Register 1018 (Read-Only, Float32) : Analogue Input 5/PRT2
+ 
+                                                                       
+ 
+ 
+......................................................................
+ 
+ 22
+  
+Register 1020 (Read-Only, Float32) : Analogue Input 6/PRT1
+ 
+                                                                       
+ 
+ 
+......................................................................
+ 
+ 22
+  
+Read/Write Registers
+ 
+                                                                                                                                              
+ 
+ 
+.............................................................................................................................................
+ 
+ 23
+  
+Register 50 (Read/Write, Int32) : System Config (Non-Volatile)
+ 
+                                                                   
+ 
+ 
+..................................................................
+ 
+ 24
+  
+Register 52 (Read/Write, Int32) : Digital Outputs
+ 
+                                                                                           
+ 
+ 
+..........................................................................................
+ 
+ 25
+  
+Register 54 (Read/Write, Int32) : Pulse Output 1 bucket
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 25
+  
+Register 56 (Read/Write, Int32) : Pulse Output 2 bucket
+ 
+                                                                                 
+ 
+ 
+................................................................................
+ 
+ 25
+  
+Register 58 (Read/Write, Int32) : Pulse Output 1 period (Non-Volatile)
+ 
+                                                        
+ 
+ 
+.......................................................
+ 
+ 25
+  
+Register 60 (Read/Write, Int32) : Pulse Output 2 period (Non-Volatile)
+ 
+                                                        
+ 
+ 
+.......................................................
+ 
+ 25
+  
+Register 62 (Read/Write, Int32): Prover Configuration
+ 
+                                                                                   
+ 
+ 
+..................................................................................
+ 
+ 26
+  
+Register 64 (Read/Write, Int32) : [Unused]
+ 
+                                                                                                     
+ 
+ 
+....................................................................................................
+ 
+ 26
+  
+Register 66 (Read/Write, Int32) : Prover OneShot Count (Non-Volatile)
+ 
+                                                       
+ 
+ 
+......................................................
+ 
+ 26
+  
+Register 68 (Read/Write, Int32) : Purge Pulse Output #1
+ 
+                                                                                
+ 
+ 
+...............................................................................
+ 
+ 26
+  
+Register 70 (Read/Write, Int32) : Purge Pulse Output #2
+ 
+                                                                                
+ 
+ 
+...............................................................................
+ 
+ 27
+  
+Register 72 (Read/Write, Int32) : RAWOUT Mode
+ 
+                                                                                        
+ 
+ 
+.......................................................................................
+ 
+ 27
+  
+Register 1050 (Read/Write, Float32) : DAC 1
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 27
+  
+Register 1052 (Read/Write, Float32) : DAC 2
+ 
+                                                                                                 
+ 
+ 
+................................................................................................
+ 
+ 27
+  
+Example Modbus Messages
+ 
+                                                                                                                                         
+ 
+ 
+........................................................................................................................................
+ 
+ 28
+  
+Poll for Good Pulse Count (Channel A) - INT32 (1032 Byte Order)
+ 
+                                                              
+ 
+ 
+.............................................................
+ 
+ 28
+  
+Poll for Good Pulse Frequency (Channel A) - FLOAT32 (3210 Byte Order)
+ 
+                                                 
+ 
+ 
+................................................
+ 
+ 29
+  
+Poll to force Purge Pulse Out #1 - INT32 (1032 Byte Order)
+ 
+                                                                          
+ 
+ 
+.........................................................................
+ 
+ 30
+  
+Poll to set DAC Out #1 - FLOAT32 (3210 Byte Order)
+ 
+                                                                                  
+ 
+ 
+.................................................................................
+ 
+ 31
+  
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 3 of 31
+
+=== MBMAP PAGE 4 ===
+Introduction
+Overview
+The NÅNO RTU2 can be used in either PIU (prover data acquisition mode) or as an RTU, with specific features 
+for flow measurement and prover (Small Volume, Ball or Master Meter) including Dual Pulse pulse fidelity and 
+Dual Chronometry.
+Software description
+The NÅNO RTU2 supports Modbus RTU.
+The currently supported Modbus functions are:-
+FN03/FN04
+Read Registers
+FN08
+Diagnostics (note : only Subfunction 00 Return Query Data is supported)
+FN16
+Preset Multiple Registers
+Writes to unused registers are simply ignored.
+Reads from unused registers return 0x0000.
+Turnaround Delay
+The typical turnaround delay is approximately 2.5ms.
+Modbus Maps
+There are two separate Modbus maps in the RTU2, these are
+1)
+The Scaled 32 Bit Integer Modbus Slave Map
+2) 
+Legacy Mixed Format Modbus Slave Map
+Each of these may have advantages in specific applications, but the Scaled 32 Bit Integer Modbus Slave Map is in 
+most cases the easiest to use, since unlike Floating point number, the scaled Integer values are human readable, 
+and ALL data can be acquired in one Modbus Poll.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 4 of 31
+
+=== MBMAP PAGE 5 ===
+Scaled 32 Bit Integer Modbus Slave Map
+Tabular View
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+Value
+2000
+Int32
+P513 Hardware Version
+RO
+n/a
+0 to 65535
+Not Scaled
+2002
+Int32
+P513 Software Version
+RO
+n/a
+0 to 65535
+Not Scaled
+2004
+Int32
+P517 Firmware Version
+RO
+n/a
+0 to 65535
+Not Scaled
+2006
+Int32
+Reserved
+RO
+n/a
+-
+2008
+Int32
+System Status (Bits: 0 - 7)
+RO
+n/a
+0 to 255
+Binary
+2010
+Int32
+Digital Inputs (Bits: 0 - 8)
+RO
+n/a
+0 to 511
+Binary
+2012
+Int32
+Prover Status (Bits: 0-2)
+RO
+n/a
+0 to 7 
+Binary
+2014
+Int32
+Message Id (2 Hz)
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2016
+Int32
+Reserved
+RO
+n/a
+-
+2018
+Int32
+Good / A pulse count
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2020
+Int32
+Reserved
+RO
+n/a
+-
+2022
+Int32
+Bad / B pulse count
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2024
+Int32
+Reserved
+RO
+n/a
+-
+2026
+Int32
+RAWIN pulse count
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2028
+Int32
+Prover PULSEIN
+pulse count
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2030
+Int32
+Prover PULSEIN SW1-2 (gated)
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2032
+Int32
+Prover Time SW1-2 (gated) 
+( x100ns )
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2034
+Int32
+Prover Time P1-N1 (gated) 
+(x100ns)
+RO
+n/a
+0 to 4294967295 
+Not Scaled
+2036
+Int32
+Reserved
+RO
+n/a
+-
+2038
+Int32
+Good / A frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2040
+Int32
+Bad / B frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2042
+Int32
+RAWIN frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2044
+Int32
+Reserved
+RO
+n/a
+-
+2046
+Int32
+Density 1 period (50 to 5kHz)
+RO
+n/a
+0 to 2,000,000,000
+uS x 100,000
+2048
+Int32
+Density 1 period (50 to 5kHz)
+RO
+n/a
+0 to 2,000,000,000
+uS x 100,000
+2050
+Int32
+Reserved
+RO
+n/a
+-
+2052
+Int32
+Analog Input 1 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2054
+Int32
+Analog Input 2 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2056
+Int32
+Analog Input 3 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2058
+Int32
+Analog Input 4 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2060
+Int32
+Analog Input 5 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2062
+Int32
+PRT (60 to 212 Ohms)
+RO
+n/a
+ 0 to ???,000,000 
+Ohm x 1,000,000
+2064
+Int32
+Analog Channel Status
+RO
+n/a
+0 to 4095
+Binary
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 5 of 31
+
+=== MBMAP PAGE 6 ===
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+Value
+2066
+Int32
+Reserved
+RO
+n/a
+-
+2068
+Int32
+DAC 1 (0 to 21mA)
+R/W
+No
+0-24,000 
+mA x1000
+2070
+Int32
+DAC 2 (0 to 21mA)
+R/W
+No
+0-24,000 
+mA x1000
+2072
+Int32
+Digital Outputs (Bits 0 – 6)
+R/W
+No
+0 to 127
+Binary
+2074
+Int32
+Pulse Output 1 bucket (0 to 
+65535)
+R/W
+No
+0 to 65535
+Not Scaled
+2076
+Int32
+Pulse Output 2 bucket (0 to 
+65535)
+R/W
+No
+0 to 65535
+Not Scaled
+2078
+Int32
+Prover Configuration (1=Run)
+R/W
+No
+0 or 1
+Binary
+2080
+Int32
+Reserved (Writes are ignored)
+R/W
+No
+-
+2082
+Int32
+Purge Pulse Output #1 (1=Reset)
+R/W
+No
+0 or 1
+Binary
+2084
+Int32
+Purge Pulse Output #2 (1=Reset)
+R/W
+No
+0 or 1
+Binary
+2086
+Int32
+System Configuration (Bits: 0 - 7 
+Pulses)
+R/W
+YES 0 to 256
+Binary
+2088
+Int32
+System Configuration (Bits: 10 - 
+19 Analogs)
+R/W
+YES 0 to 1023
+Binary
+2090
+Int32
+Pulse Output 1 width (1 to 
+2047mSec)
+R/W
+YES 1 to 2047
+Not Scaled
+2092
+Int32
+Pulse Output 2 width (1 to 
+2047mSec)
+R/W
+YES 1 to 2047
+Not Scaled
+2094
+Int32
+Prover OneShot Count (1mS 
+debounce counts)
+R/W
+YES 0 to 65535
+Not Scaled
+2096
+Int32
+RAWOUT Mode (Bits 0 - 2)
+R/W
+No
+0 to 7
+Binary
+2098
+Int32
+Prover Source Selection (0 - 2)
+R/W
+No
+0 to 7
+Binary
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 6 of 31
+
+=== MBMAP PAGE 7 ===
+Register Description
+All the registers in the scaled 32 Bit map are 32 bit integers in 3210 Byte Order
+Register 2000 (Read-Only) : P513 Hardware Version
+The firmware in the P513 & P572 boards are split into three types. This register holds the Hardware version for 
+the P513 firmware. 
+e.g. if the Hardware firmware was 12v01, this register would hold the decimal value 1201.
+Register 2002 (Read-Only) : P513 Software Version
+The firmware in the P513 & P572 boards are split into three types. This register holds the Software version for the
+P513 firmware. 
+e.g. if the Software firmware was 0v22, this register would hold the decimal value 22 (to represent 0022).
+Register 2004 (Read-Only) : P572 Firmware Version
+The firmware in the P513 & P572 boards are split into three types. This register holds the version for the P572 
+firmware. 
+e.g. if the firmware was 1v18, this register would hold the decimal value 118 (to represent 0118).
+Register 2006 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2008 (Read-Only) : System Status
+Bit(s)
+Function 
+Values
+0
+Comms status
+0 : No comms error
+1 : Comms error
+1
+Pulse Out 1 Bucket Status
+0 : Bucket okay
+1 : Last fill was rejected
+2
+Pulse Out 2 Bucket Status
+0 : Bucket okay
+1 : Last fill was rejected
+3
+Dual Pulse Channel A Line Integrity
+0 : Line okay
+1 : Line fail
+4
+Dual Pulse Channel B Line Integrity
+0 : Line okay
+1 : Line fail
+5
+Good/A roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+6
+Bad/B roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+7
+RAWIN roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+31:8
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 7 of 31
+
+=== MBMAP PAGE 8 ===
+Register 2010 (Read-Only) : Digital Inputs
+Bit(s)
+Function 
+Values
+8:0
+Digital Input 9..1
+0 : Digital Input Inactive
+1 : Digital Input Active
+31:9
+[unused]
+[unused]
+Register 2012 (Read-Only) : Prover Status
+Bit(s)
+Function 
+Values
+2:0
+Prover State
+0 :
+Waiting for Start
+1 :
+Waiting for SS1 rising edge
+2 : 
+Got SS1 rising edge, waiting for subsequent PULSEIN rising edge
+3 : 
+Got SS1 rising edge and subsequent PULSEIN rising edge, waiting 
+for SS1 falling edge
+4 :
+Got SS1 falling edge, no PULSEIN rising edge since state 2.
+5 :
+Got SS1 falling edge and PULSEIN rising edge, waiting for SS2
+6 :
+Got SS2 rising edge and waiting for  PULSEIN N+1 rising edge
+7 :
+Done, got SS2 rising edge and PULSEIN N+1 rising edge. Waiting 
+for Start
+8 :
+Abort, waiting for Start
+31:3
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 8 of 31
+SS1 
+Rising 
+Edge
+PULSEIN 1 
+Rising Edge
+PULSEIN
+Sphere Switch
+Issue 
+Prove 
+Start
+0      1               2  3  5 (if  pulse seen) 
+                                 4 (if  NO  pulse is seen)
+SS1 
+Falling 
+Edge
+SS2 
+Rising 
+Edge
+SS2 
+Falling 
+Edge
+6  7 
+                8 
+Stage Numbers whilst in Prove Cycle
+PULSEIN N+1 
+Rising Edge
+
+=== MBMAP PAGE 9 ===
+Register 2014 (Read-Only) : FPGA Message Count
+Each data message from the P513 I/O board is marked with a unique sequential id value.  The value is reset to 
+zero when the unit is powered up (or reset), and increases with each data message.  Since each data message is 
+automatically generated every ½ second from the high accuracy clock, the id can be used to calculate time 
+intervals.
+NOTE:  Rolls over at 4,294,967,295. (232-1)
+Register 2016 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2018 (Read-Only) : Good / A pulse count
+Total number of pulses received on the Good / A channel.
+If in Dual Pulse mode this will be populated with the Good pulse count. In Single Pulse mode, it will be Pulse 
+Train A count
+NOTE:  Rolls over at 4,294,967,295. (232-1)
+Register 2020 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2022 (Read-Only) : Bad / B pulse count
+Total number of pulses received on the Bad / B channel.
+If in Dual Pulse mode this will be populated with the Bad pulse count. In Single Pulse mode, it will be Pulse Train
+B count
+NOTE:  Rolls over at 4,294,967,295. (232-1)
+Register 2024 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2026 (Read-Only) : RAWIN pulse count
+Total number of pulses received on the RAWIN channel.
+NOTE: Rolls over at 4,294,967,295. (232-1)
+Register 2028 (Read-Only) : Prover PULSEIN
+Number of pulses received on the Prover PULSEIN channel.
+The PULSEIN source can be selected via the System Config register (Register 50).
+Register 2030 (Read-Only) : Prover PULSEIN SW1-2 Count
+Number of pulses received on the Prover PULSEIN channel occurring between Sphere Switch 1 Leading Edge 
+and Sphere Switch 2 Leading Edge.
+This register is reset to 0 when a prove sequence is initiated.
+NOTE:  Rolls over at 65535. (216-1)
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 9 of 31
+
+=== MBMAP PAGE 10 ===
+Register 2032 (Read-Only) : Prover Time SW1-2
+Timer interval (in 100ns counts) between Sphere Switch 1 Leading Edge and Sphere Switch 2 Leading Edge. This
+register is reset to 0 when a prove sequence is initiated.
+NOTE:  Rolls over at 4,294,967,295. (232-1)
+Register 2034 (Read-Only) : Prover Time P1-N1
+Timer interval (in 100ns counts) between PULSEIN 1 Leading Edge and PULSEIN N+1  Leading Edge
+This register is reset to 0 when a prove sequence is initiated.
+NOTE:  Rolls over at 4,294,967,295. (232-1)
+Register 2036 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2038 (Read-Only) : Good / A frequency
+Frequency of the Good / A input. Divide the value by 100,000 to get Hz.
+If in Dual Pulse mode this will be populated with the Good pulse frequency. In Single Pulse mode, it will be Pulse
+Train A frequency.
+Register 2040 (Read-Only) : Bad / B frequency
+Frequency of the Bad / B input. Divide the value by 100,000 to get Hz.
+If in Dual Pulse mode this will be populated with the Bad pulse frequency. In Single Pulse mode, it will be Pulse 
+Train B frequency.
+Register 2042 (Read-Only) : RAWIN frequency
+Frequency of the RAWIN input. Divide the value by 100,000 to get Hz.
+Register 2044 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2046 (Read-Only) : Density 1 period
+Period of the Density 1 input. Divide the value by 100,000 to get microseconds.
+Register 2048 (Read-Only) : Density 2 period
+Period of the Density 2 input. Divide the value by 100,000 to get microseconds.
+Register 2050 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2052 (Read-Only) : Analogue Input 1
+Value of Analogue Input 1. Value in nA (divide by a million to get milli-amps)
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 10 of 31
+
+=== MBMAP PAGE 11 ===
+Register 2054 (Read-Only) : Analogue Input 2
+Value of Analogue Input 2. Value in nA (divide by a million to get milli-amps).
+Register 2056 (Read-Only) : Analogue Input 3
+Value of Analogue Input 3. Value in nA (divide by a million to get milli-amps).
+Register 2058 (Read-Only) : Analogue Input 4
+Value of Analogue Input 4. Value in nA (divide by a million to get milli-amps).
+Register 2060 (Read-Only) : Analogue Input 5/PRT2
+Value of Analogue Input 5. This may be the 4-20 value in nA (divide by a million to get milli-amps) or if in PRT/
+RTD Mode, the resistance in µΩ (divide by a million to get ohms)
+Register 2062 (Read-Only) : Analogue Input 6/PRT1
+Value of Analogue Input 6. This may be the 4-20 Value in nA (divide by a million to get milli-amps) or if in PRT/
+RTD Mode, the resistance in µΩ (divide by a million to get ohms)
+Register 2064 (Read-Only) : Analog Channel Status
+Bit(s)
+Function 
+Values
+0
+Analog Input AnIn 01
+0= No error, 1 =Analog channel comms failed
+1
+Analog Input AnIn 02
+0= No error, 1 =Analog channel comms failed
+2
+Analog Input AnIn 03
+0= No error, 1 =Analog channel comms failed
+3
+Analog Input AnIn 04
+0= No error, 1 =Analog channel comms failed
+6:4
+Analog Input AnIn 05
+000: No error
+001: Analog channel comms failed
+010: PRT/RTD Current Low 
+011:  PRT/RTD Current high
+100: PRT/RDT wiring reversed
+101 & 110 are reserved
+9:7
+Analog Input AnIn 05
+As bits 6:4
+31:10
+[unused]
+[unused]
+Register 2066 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex)
+Register 2068 (Read/Write) : DAC 1
+DAC 1 setting in µA. Divide by 1,000 to get milli-amps
+On a power cycle, this register will hold a value of 0.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 11 of 31
+
+=== MBMAP PAGE 12 ===
+Register 2070 (Read/Write) : DAC 2
+DAC 2 setting in µA. Divide by 1,000 to get milli-amps
+On a power cycle, this register will hold a value of 0.
+Register 2072 (Read/Write) : Digital Outputs
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Digital Output 1
+0 : Digital Output Inactive
+1 : Digital Output Active
+1
+Digital Output 2
+0 : Digital Output Inactive
+1 : Digital Output Active
+2
+Digital Output 3
+0 : Digital Output Inactive
+1 : Digital Output Active
+3
+Digital Output 4
+0 : Digital Output Inactive
+1 : Digital Output Active
+4
+Digital Output 5
+0 : Digital Output Inactive
+1 : Digital Output Active
+5
+Digital Output 6
+0 : Digital Output Inactive
+1 : Digital Output Active
+6
+Alarm relay
+0 : Relay inactive (Alarm Set)
+1 : Relay active (No Fault)
+31:7
+[unused]
+[unused]
+Register 2074 (Read/Write) : Pulse Output 1 bucket
+Writing to this register adds counts to the Pulse Output 1 bucket.  If the counts would overflow the bucket, then 
+bit 1 in the System Status register will be set and no counts will be added.
+Once the increment has been processed or on a power cycle, this register will hold a value of 0.
+Note that the bucket can only contain a maximum of 65535 counts.
+Register 2076 (Read/Write) : Pulse Output 2 bucket
+Writing to this register adds counts to the Pulse Output 2 bucket.  If the counts would overflow the bucket, then 
+bit 2 in the System Status register will be set and no counts will be added.
+Once the increment has been processed or on a power cycle, this register will hold a value of 0.
+Note that the bucket can only contain a maximum of 65535 counts.
+Register 2078 (Read/Write): Prover Configuration
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Prove Sequence Control
+0 : Do nothing/Idle
+1 : Initiate prove sequence
+31:1
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 12 of 31
+
+=== MBMAP PAGE 13 ===
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+Register 2080 (Read-Only) : Reserved
+Reading any reserved register will result in a value of zero (00000000hex).
+Register 2082 (Read/Write) : Purge Pulse Output #1
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Pulse Out 1 Bucket Purge
+(note : always 0 on reset)
+0 : Do nothing
+1 : Purge
+31:1
+[unused]
+[unused]
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+Register 2084 (Read/Write) : Purge Pulse Output #2
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Pulse Out 2 Bucket Purge
+(note : always 0 on reset)
+0 : Do nothing
+1 : Purge
+31:1
+[unused]
+[unused]
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 13 of 31
+
+=== MBMAP PAGE 14 ===
+Register 2086 (Read/Write) : System Config (Non-Volatile)
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+1:0
+Sphere Switch Polarity
+00 : No change
+01 : Normal
+10 : Invert
+11 : No Change
+3:2
+Pulse Out 1 Mode
+00 : No change
+01 : Always '0'
+10 : Always '1'
+11 : Pulse output
+5:4
+Pulse Out 2 Mode
+00 : No change
+01 : Always '0'
+10 : Always '1'
+11 : Pulse output
+7:6
+Dual Pulse Mode
+00 : No change
+01 : Twin Single Streams (Level E)
+10 : Dual Pulse (Level B) 
+11 : Dual Pulse (Level A) 
+31:8
+[unused]
+[unused]
+Register 2088 (Read/Write) : System Config (Non-Volatile)
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+1:0
+ADC 1 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+3:2
+ADC 2 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+5:4
+ADC 3 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+7:6
+ADC 4 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+9:8
+ADC 5 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 14 of 31
+
+=== MBMAP PAGE 15 ===
+11:10
+ADC 6 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+13:12
+ADC 6 / RTD 1 Mode
+00 : No Change
+01 : Voltage/Current mode
+10 : RTD mode
+11 : No Change
+15:14
+ADC 5 / RTD 2 Mode
+00 : No Change
+01 : Voltage/Current mode
+10 : RTD mode
+11 : No Change
+31:16
+[unused]
+[unused]
+Register 2090 (Read/Write) : Pulse Output 1 period (Non-Volatile)
+Writing to this register sets the pulse rate for Pulse Output 1.  The value written here sets the on period for the 
+output pulse train.  The pulse output mark/space ratio is fixed at 50:50.
+Default value is 250ms.
+As an example, if this value is set to 1, it will switch on the output for 1ms, with 1ms off (as 50:50 duty cycle) so 
+that the output frequency would be 500Hz.
+Range 1 – 2047. (11 bit number)
+Register 2092 (Read/Write) : Pulse Output 2 period (Non-Volatile)
+Writing to this register sets the pulse rate for Pulse Output 2.  The value written here sets the on period for the 
+output pulse train.  The pulse output mark/space ratio is fixed at 50:50.
+Default value is 250ms.
+As an example, if this value is set to 1, it will switch on the output for 1ms, with 1ms off (as 50:50 duty cycle) so 
+that the output frequency would be 500Hz.
+Range 1 – 2047. (11 bit number)
+Register 2094 (Read/Write) : Prover OneShot Count (Non-Volatile)
+The Prover OneShot Count specifies the dead time after the first pulse, such that any pulses in the dead time are 
+ignored.
+Maximum valid value is 65535.
+The period is measured in 1ms counts, and the default OneShot count is 300 (= 300ms).
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 15 of 31
+
+=== MBMAP PAGE 16 ===
+Register 2096 (Read/Write) : RAWOUT Mode
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+1:0
+RAWOUT Mode
+00 : No change
+01 : RAWOUT disabled 
+10 : RAWOUT = Dual Pulse Channel A
+11 : RAWOUT = Dual Pulse Channel B
+31:2
+[unused]
+[unused]
+Register 2098 (Read/Write) : Prover Source Selection
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+2:0
+Prover PULSEIN Source
+000 : RAWIN
+001 : Dual Pulse Good
+010 : Dual Pulse Bad
+011 : Dual Pulse Channel A
+100 : Dual Pulse Channel B
+101 : unused
+110 : unused
+111 : unused
+31:3
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 16 of 31
+Others pulses are ignored 
+until oneshot period has 
+elapsed
+OneShot period =
+count x 1ms
+
+=== MBMAP PAGE 17 ===
+Legacy Mixed Format Modbus Slave Map
+Read-Only Registers
+Address
+Type
+Function
+0
+Int32
+System Status
+2
+Int32
+Digital Inputs
+4
+Int32
+Message Id
+6 *
+Int32
+Good / A pulse count
+8 *
+Int32
+Bad / B pulse count
+10
+Int32
+RAWIN pulse count
+12
+Int32
+Prover Status
+14
+Int32
+Prover PULSEIN
+16
+Int32
+Prover PULSEIN SW1-2
+18
+Int32
+Prover Time SW1-2
+20
+Int32
+Prover Time P1-N1
+22
+Int32
+P513 Hardware Version
+24
+Int32
+P513 Software Version
+26
+Int32
+P517 Firmware Version
+28
+Int32
+Reserved - Future
+1000 *
+Float32
+Good / A frequency
+1002 *
+Float32
+Bad / B frequency
+1004
+Float32
+RAWIN frequency
+1006
+Float32
+Density 1 period
+1008
+Float32
+Density 2 period
+1010 **
+Float32
+Analogue Input 1
+1012 **
+Float32
+Analogue Input 2
+1014 **
+Float32
+Analogue Input 3
+1016 **
+Float32
+Analogue Input 4
+1018 **
+Float32
+Analogue Input 5
+1020 **
+Float32
+PRT
+*
+- Function depends on the Mode Selected
+**
+- Requires Optional Analogue Board fitted (P511) 
+NOTE:
+Int32 values are in Modbus 1032 byte order and
+Float32 value are in Modbus 3210 byte order.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 17 of 31
+
+=== MBMAP PAGE 18 ===
+Register 0 (Read-Only, Int32) : System Status
+Bit(s)
+Function 
+Values
+0
+Comms status
+0 : No comms error
+1 : Comms error
+1
+Pulse Out 1 Bucket Status
+0 : Bucket okay
+1 : Last fill was rejected
+2
+Pulse Out 2 Bucket Status
+0 : Bucket okay
+1 : Last fill was rejected
+3
+Dual Pulse Channel A Line Integrity
+0 : Line okay
+1 : Line fail
+4
+Dual Pulse Channel B Line Integrity
+0 : Line okay
+1 : Line fail
+5
+Good/A roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+6
+Bad/B roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+7
+RAWIN roll-over flag
+0 : No roll-over
+1 : Roll-over occurred (self clears after 5 seconds)
+31:8
+[unused]
+[unused]
+Register 2 (Read-Only, Int32) : Digital Inputs
+Bit(s)
+Function 
+Values
+8:0
+Digital Input 8..0
+0 : Digital Input Inactive
+1 : Digital Input Active
+31:9
+[unused]
+[unused]
+Register 4 (Read-Only, Int32) : Message Id
+Id “time-stamp” marker.  Each data message from the P513 I/O board is marked with a unique id value.  The 
+value is reset to zero when the unit is powered up (or reset), and increases with each data message.  Since each 
+data message is automatically generated every ½ second from the high accuracy clock, the id can be used to 
+calculate time intervals.
+Rolls over at 4,294,967,295. (232-1)
+Register 6 (Read-Only, Int32) : Good / A pulse count
+Total number of pulses received on the Good / A channel.
+If in Dual Pulse mode this will be populated with the Good pulse count. In Single Pulse mode, it will be Pulse 
+Train A count
+Rolls over at 4,294,967,295. (232-1)
+Register 8 (Read-Only, Int32) : Bad / B pulse count
+Format
+Int32
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 18 of 31
+
+=== MBMAP PAGE 19 ===
+Total number of pulses received on the Bad / B channel.
+If in Dual Pulse mode this will be populated with the Bad pulse count. In Single Pulse mode, it will be Pulse Train
+B count
+Rolls over at 4,294,967,295. (232-1)
+Register 10 (Read-Only, Int32) : RAWIN pulse count
+Total number of pulses received on the RAWIN channel.
+Rolls over at 4,294,967,295. (232-1)
+Register 12 (Read-Only, Int32) : Prover Status
+Bit(s)
+Function 
+Values
+2:0
+Prover State
+0 :
+Waiting for Start
+1 :
+Waiting for SS1 rising edge
+2 : 
+Got SS1 rising edge, waiting for subsequent PULSEIN rising edge
+3 : 
+Got SS1 rising edge and subsequent PULSEIN rising edge, waiting 
+for SS1 falling edge
+4 :
+Got SS1 falling edge, waiting for PULSEIN rising edge
+5 :
+Got SS1 falling edge and PULSEIN rising edge, waiting for SS2
+6 :
+Got SS2 rising edge and PULSEIN rising edge
+7 :
+Done, got SS2 rising edge and PULSEIN rising edge N+1. Waiting 
+for Start
+8 :
+Abort, waiting for Start
+31:3
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 19 of 31
+
+=== MBMAP PAGE 20 ===
+Register 14 (Read-Only, Int32) : Prover PULSEIN
+Number of pulses received on the Prover PULSEIN channel.
+The PULSEIN source can be selected via the System Config register (Register 50).
+Register 16 (Read-Only, Int32) : Prover PULSEIN SW1-2
+Number of pulses received on the Prover PULSEIN channel occurring between Sphere Switch 1 (SS edge #1) and
+Sphere Switch 2 (SS edge #3).
+This register is reset to 0 when a prove sequence is initiated.
+Rolls over at 65535. (216-1)
+Register 18 (Read-Only, Int32) : Prover Time SW1-2
+Timer interval (in 100ns counts) between Sphere Switch 1 (SS edge #1) and Sphere Switch 2 (SS edge #3).
+This register is reset to 0 when a prove sequence is initiated.
+Rolls over at 4,294,967,295. (232-1)
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 20 of 31
+SS1 
+Rising 
+Edge
+PULSEIN 1 
+Rising Edge
+PULSEIN
+Sphere Switch
+Issue 
+Prove 
+Start
+0      1               2  3  5 (if  pulse seen) 
+                                 4 (if  NO  pulse is seen)
+SS1 
+Falling 
+Edge
+SS2 
+Rising 
+Edge
+SS2 
+Falling 
+Edge
+6  7 
+                8 
+Stage Numbers whilst in Prove Cycle
+PULSEIN N+1 
+Rising Edge
+
+=== MBMAP PAGE 21 ===
+Register 20 (Read-Only, Int32) : Prover Time P1-N1
+Timer interval (in 100ns counts) between PULSEIN edge #1 and PULSEIN edge #2.
+This register is reset to 0 when a prove sequence is initiated.
+Rolls over at 4,294,967,295. (232-1)
+Register 22 (Read-Only, Int32) : P513 Hardware Version
+The firmware in the P513 & P517 boards are split into three types. This register holds the Hardware version for 
+the P513 firmware. 
+e.g. if the Hardware firmware was 12v1, this register would hold the decimal value 1201.
+Register 24 (Read-Only, Int32) : P513 Software Version
+The firmware in the P513 & P517 boards are split into three types. This register holds the Software version for the
+P513 firmware. 
+e.g. if the Software firmware was 0v22, this register would hold the decimal value 22 (to represent 0022).
+Register 26 (Read-Only) : P517 Firmware Version
+The firmware in the P513 & P517 boards are split into three types. This register holds the version for the P517 
+firmware. 
+e.g. if the firmware was 1v18, this register would hold the decimal value 118 (to represent 0118).
+Register 28 (Read-Only, Int32) : [Reserved]
+Reserved for possible future use, reserved for Analogue Calibration date.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 21 of 31
+
+=== MBMAP PAGE 22 ===
+Register 1000 (Read-Only, Float32) : Good / A frequency
+Frequency of the Good / A input. Value in Hz.
+If in Dual Pulse mode this will be populated with the Good pulse frequency. In Single Pulse mode, it will be Pulse
+Train A frequency.
+Register 1002 (Read-Only, Float32) : Bad / B frequency
+Frequency of the Bad / B input. Value in Hz.
+If in Dual Pulse mode this will be populated with the Bad pulse frequency. In Single Pulse mode, it will be Pulse 
+Train B frequency.
+Register 1004 (Read-Only, Float32) : RAWIN frequency
+Frequency of the RAWIN input. Value in Hz.
+Register 1006 (Read-Only, Float32) : Density 1 period
+Period of the Density 1 input. Value in microseconds.
+Register 1008 (Read-Only, Float32) : Density 2 period
+Period of the Density 2 input. Value in microseconds.
+Register 1010 (Read-Only, Float32) : Analogue Input 1
+Value of Analogue Input 1. Value in mA.
+Register 1012 (Read-Only, Float32) : Analogue Input 2
+Value of Analogue Input 2. Value in mA.
+Register 1014 (Read-Only, Float32) : Analogue Input 3
+Value of Analogue Input 3. Value in mA.
+Register 1016 (Read-Only, Float32) : Analogue Input 4
+Value of Analogue Input 4. Value in mA.
+Register 1018 (Read-Only, Float32) : Analogue Input 5/PRT2
+Value of Analogue Input 5. Value in mA.
+Register 1020 (Read-Only, Float32) : Analogue Input 6/PRT1
+Value of the PRT input. Value in ohms.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 22 of 31
+
+=== MBMAP PAGE 23 ===
+Read/Write Registers
+Unless otherwise stated, all Read/Write register values are lost on a reset. These registers will default to a zero 
+value if no default is specified or the default value if specified. Non Volatile registers will retain their setting, 
+these registers are highlighted below.
+Address
+Type
+Function
+50 *
+Int32
+System Configuration
+52
+Int32
+Digital Outputs
+54
+Int32
+Pulse Output 1 bucket
+56
+Int32
+Pulse Output 2 bucket
+58 *
+Int32
+Pulse Output 1 period
+60 *
+Int32
+Pulse Output 2 period
+62
+Int32
+Prover Configuration
+64
+Int32
+[unused]
+66 *
+Int32
+Prover OneShot Count
+68
+Int32
+Purge Pulse Output #1
+70
+Int32
+Purge Pulse Output #2
+72
+Int32
+RAWOUT Mode
+1050 **
+Float32
+DAC 1
+1052 **
+Float32
+DAC 2
+*
+- Non Volatile registers (retained on a power cycle)
+**
+- Requires Optional Analogue Board fitted (P511) 
+NOTE:
+Int32 values are in Modbus 1032 byte order and
+Float32 value are in Modbus 3210 byte order.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 23 of 31
+
+=== MBMAP PAGE 24 ===
+Register 50 (Read/Write, Int32) : System Config (Non-Volatile)
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+1:0
+Sphere Switch Polarity
+00 : No change
+01 : Normal
+10 : Invert
+11 : No Change
+3:2
+Pulse Out 1 Mode
+00 : No change
+01 : Always '0'
+10 : Always '1'
+11 : Pulse output
+5:4
+Pulse Out 2 Mode
+00 : No change
+01 : Always '0'
+10 : Always '1'
+11 : Pulse output
+7:6
+Dual Pulse Mode
+00 : No change
+01 : Twin Single Streams (Level E)
+10 : Dual Pulse (Level B) 
+11 : Dual Pulse (Level A) 
+9:8
+[unused]
+[unused]
+11:10
+ADC 1 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+13:12
+ADC 2 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+15:14
+ADC 3 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+17:16
+ADC 4 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+19:18
+ADC 5 Mode
+00 : No Change
+01 : Current mode
+10 : Voltage mode
+11 : No Change
+22:20
+Prover PULSEIN Source
+000 : RAWIN
+001 : Dual Pulse Good
+010 : Dual Pulse Bad
+011 : Dual Pulse Channel A
+100 : Dual Pulse Channel B
+101 : unused
+110 : unused
+111 : unused
+31:23
+[unused]
+[unused]
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 24 of 31
+
+=== MBMAP PAGE 25 ===
+Register 52 (Read/Write, Int32) : Digital Outputs
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Digital Output 1
+0 : Digital Output Inactive
+1 : Digital Output Active
+1
+Digital Output 2
+0 : Digital Output Inactive
+1 : Digital Output Active
+2
+Digital Output 3
+0 : Digital Output Inactive
+1 : Digital Output Active
+3
+Digital Output 4
+0 : Digital Output Inactive
+1 : Digital Output Active
+4
+Digital Output 5
+0 : Digital Output Inactive
+1 : Digital Output Active
+5
+Digital Output 6
+0 : Digital Output Inactive
+1 : Digital Output Active
+6
+Alarm relay
+0 : Relay inactive (Alarm Set)
+1 : Relay active (No Fault)
+31:7
+[unused]
+[unused]
+Register 54 (Read/Write, Int32) : Pulse Output 1 bucket 
+Writing to this register adds counts to the Pulse Output 1 bucket.  If the counts would overflow the bucket, then 
+bit 1 in the System Status register will be set and no counts will be added.
+Once the increment has been processed or on a power cycle, this register will hold a value of 0.
+Note that the bucket can only contain a maximum of 65535 counts.
+Register 56 (Read/Write, Int32) : Pulse Output 2 bucket 
+Writing to this register adds counts to the Pulse Output 2 bucket.  If the counts would overflow the bucket, then 
+bit 2 in the System Status register will be set and no counts will be added.
+Once the increment has been processed or on a power cycle, this register will hold a value of 0.
+Note that the bucket can only contain a maximum of 65535 counts.
+Register 58 (Read/Write, Int32) : Pulse Output 1 period (Non-Volatile)
+Writing to this register sets the pulse rate for Pulse Output 1.  The value written here sets the on period for the 
+output pulse train.  The pulse output mark/space ratio is fixed at 50:50.
+Default value is 250ms.
+As an example, if this value is set to 1, it will switch on the output for 1ms, with 1ms off (as 50:50 duty cycle) so 
+that the output frequency would be 500Hz.
+Range 1 – 2047. (11 bit number)
+Register 60 (Read/Write, Int32) : Pulse Output 2 period (Non-Volatile) 
+Writing to this register sets the pulse rate for Pulse Output 2.  The value written here sets the on period for the 
+output pulse train.  The pulse output mark/space ratio is fixed at 50:50.
+Default value is 250ms.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 25 of 31
+
+=== MBMAP PAGE 26 ===
+As an example, if this value is set to 1, it will switch on the output for 1ms, with 1ms off (as 50:50 duty cycle) so 
+that the output frequency would be 500Hz.
+Range 1 – 2047. (11 bit number)
+Register 62 (Read/Write, Int32): Prover Configuration
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Prove Sequence Control
+0 : Do nothing/Idle
+1 : Initiate prove sequence
+31:1
+[unused]
+[unused]
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+Register 64 (Read/Write, Int32) : [Unused]
+Any writes to this address will be ignored.
+Register 66 (Read/Write, Int32) : Prover OneShot Count (Non-Volatile)
+The Prover OneShot Count specifies the dead time after the first pulse, such that any pulses in the dead time are 
+ignored.
+Maximum valid value is 65535.
+The period is measured in 1ms counts, and the default OneShot count is 300 (= 300ms).
+Register 68 (Read/Write, Int32) : Purge Pulse Output #1
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Pulse Out 1 Bucket Purge
+(note : always 0 on reset)
+0 : Do nothing
+1 : Purge
+31:1
+[unused]
+[unused]
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 26 of 31
+Others pulses are ignored 
+until oneshot period has 
+elapsed
+OneShot period =
+count x 1ms
+
+=== MBMAP PAGE 27 ===
+Register 70 (Read/Write, Int32) : Purge Pulse Output #2
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+0
+Pulse Out 2 Bucket Purge
+(note : always 0 on reset)
+0 : Do nothing
+1 : Purge
+31:1
+[unused]
+[unused]
+Once the request has been processed or on a power cycle, this register will hold a value of 0.
+Register 72 (Read/Write, Int32) : RAWOUT Mode
+Bit(s)
+Function 
+Values (defaults are shown in bold)
+1:0
+RAWOUT Mode
+00 : No change
+01 : RAWOUT disabled 
+10 : RAWOUT = Dual Pulse Channel A
+11 : RAWOUT = Dual Pulse Channel B
+31:2
+[unused]
+[unused]
+Register 1050 (Read/Write, Float32) : DAC 1
+DAC 1 setting in mA.
+On a power cycle, this register will hold a value of 0.
+Register 1052 (Read/Write, Float32) : DAC 2
+DAC 2 setting in mA.
+On a power cycle, this register will hold a value of 0.
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 27 of 31
+
+=== MBMAP PAGE 28 ===
+Example Modbus Messages
+Poll for Good Pulse Count (Channel A) - INT32 (1032 Byte Order)
+NOTE: 
+This example is for the legacy Mixed Format Slave Map, the Scaled Integer version is in 3210 
+Byte Order
+Request:
+TX: 01 03 00 06 00 02 24 0A
+where;
+Slave Address = 01
+Function Code = 03
+Starting Address = 00 06 (Decimal 6)
+Quantity of Registers = 00 02
+Checksum = 24 0A
+Response:
+RX: 01 03 04 0A F7 00 21 88 01
+where;
+Slave Address = 01
+Function Code = 03
+Byte Count = 04
+Data Register 6 Value =  0A F7 (LSB)
+Data Register 7 Value =  00 21 (MSB)
+Checksum = 88 01
+Register 6 represents the lower 16 bits of the INT32, Register 7 represents the higher 16 bits of the INT32
+The data string 0AF70021 decodes to a value of 00210AF7 (Decimal 2165495)
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 28 of 31
+
+=== MBMAP PAGE 29 ===
+Poll for Good Pulse Frequency (Channel A) - FLOAT32 (3210 Byte Order)
+Request:
+TX: 01 03 03 E8 00 02 44 7B
+where;
+Slave Address = 01
+Function Code = 03
+Starting Address = 03E8 (Decimal 1000)
+Quantity of Registers = 00 02
+Checksum = 44 7B
+Response:
+RX: 01 03 04 45 79 FE D6 FF 18
+where;
+Slave Address = 01
+Function Code = 03
+Byte Count = 04
+Data Register 1000 Value =   45 79 (MSB)
+Data Register 1001 Value =   FE D6 (LSB)
+Checksum = FF 18
+Register 1000 represents the higher 16 bits of the FLOAT32, Register 1001 represents the lower 16 bits of the 
+FLOAT32
+The data string 4579FED6 decodes as 3999.927246 as a IEEE-754 value
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 29 of 31
+
+=== MBMAP PAGE 30 ===
+Poll to force Purge Pulse Out #1 - INT32 (1032 Byte Order)
+NOTE: 
+This example is for the legacy Mixed Format Slave Map, the Scaled Integer version is in 3210 
+Byte Order
+Request:
+TX: 01 10 00 44 00 02 04 00 01 00 00 A7 AC
+where;
+Slave Address = 01
+Function Code = 10 (Decimal 16)
+Starting Address = 00 44 (Decimal 68)
+Quantity of Registers = 00 02
+Byte Count 04
+Data Register 68 Value =  00 01 (LSB)
+Data Register 69 Value =  00 00 (MSB)
+Checksum = A7 AC
+Response:
+RX: 01 10 00 44 00 02 01 DD
+where;
+Slave Address = 01
+Function Code = 10 (Decimal 16)
+Starting Address = 00 44 (Decimal 68)
+Quantity of Registers = 00 02
+Checksum = 01 DD
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 30 of 31
+
+=== MBMAP PAGE 31 ===
+Poll to set DAC Out #1 - FLOAT32 (3210 Byte Order)
+Request:
+TX: 01 10 04 1A 00 02 04 41 40 00 00 55 F4
+where;
+Slave Address = 01
+Function Code = 10 (Decimal 16)
+Starting Address = 041A (Decimal 1050)
+Quantity of Registers = 00 02
+Byte Count 04
+Data Register 1050 Value =  41 40 (MSB)
+Data Register 1051 Value =  00 00 (LSB)
+Checksum = 55 F4
+Register 1050 represents the higher 16 bits of the FLOAT32, Register 1051 represents the lower 16 bits of the 
+FLOAT32
+The data string 41400000 decodes as 12 as a IEEE-754 value
+Response:
+RX: 01 10 04 1A 00 02 61 3F
+where;
+Slave Address = 01
+Function Code = 10 (Decimal 16)
+Starting Address = 04 1A (Decimal 1050)
+Quantity of Registers = 00 02
+Checksum = 61 3F
+NF_P572RTU2_MAM/R0
+P572 RTU2 - Modbus Address Map Manual
+Page 31 of 31

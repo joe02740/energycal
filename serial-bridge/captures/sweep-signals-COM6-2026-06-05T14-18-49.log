@@ -1,0 +1,11 @@
+# sweep mode=signals port=COM6 trials=5 ms=2500  2026-06-05T14:18:49.375Z
+
+## trial 1: 9600 8N1 DTR1 RTS0  → 0 bytes
+
+## trial 2: 9600 8N1 DTR1 RTS1  → 0 bytes
+
+## trial 3: 9600 8N1 DTR0 RTS0  → 0 bytes
+
+## trial 4: 9600 8N1 DTR0 RTS1  → 0 bytes
+
+## trial 5: 9600 8N1 HW flow (RTS/CTS)  → 0 bytes

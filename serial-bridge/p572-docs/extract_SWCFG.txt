@@ -1,0 +1,2044 @@
+=== SWCFG PAGE 1 ===
+Newflow
+P572 RMU
+Software &
+Configuration
+Manual
+
+=== SWCFG PAGE 2 ===
+Contact:
+Newflow Ltd
+George House
+Derwent Road
+Malton, North Yorkshire
+YO17 6YB, UK
+Tel:
++44
+1653 697 200
+Fax:
++44
+8700 667 325
+Email:
+sales@newflow.co.uk
+Document Information
+ 
+Document Name:
+P572 RMU - Software & Configuration Manual
+Document Identifier 
+NF_P572RMU_SCM
+Rev
+Date
+Changes
+Prepared
+Checked
+Authorized
+0
+15 Nov 2019 Original release
+MOB
+DGS
+MOB
+1
+10 Dec 2019 Corrected Modbus Map & 
+added Alarm Relay screenshot
+MOB
+DGS
+MOB
+2
+17 Jun 2020
+Added Brooks mode, improved 
+diagnostics
+MOB
+MPFJ/GPL
+MOB
+3
+27 Aug 2020 Added ability to prove using the 
+B-Pulse Channel, and Modbus 
+Serial gateway activated
+MOB
+MPFJ
+TDB
+4.1
+22 Jul 2021
+Added BiDi 4-way valve control 
+and typo errors corrected
+MOB
+DGS
+MOB
+All trademarks are acknowledged as the property of their respective owners.
+TESTit & PROVEit are trademarks of Quorum Business Solutions, Inc. (Flow-Cal, Inc)
+This document, submitted in confidence, contains proprietary information which shall not be 
+reproduced or transferred to others without prior written permission of Newflow Ltd.
+This document shall not form part of any contract. Specifications are subject to change 
+without notice and Newflow Ltd accepts no liability of any kind for errors or omissions.
+© Newflow Ltd 2021
+Full contractual terms are available on the website at www.newflow.co.uk/pdf/tandc.pdf
+MMXXI
+Page 2 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 3 ===
+Front View of RMU
+Web Browser View
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 3 of 46
+
+=== SWCFG PAGE 4 ===
+Table of Contents
+1   Introduction.......................................................................................................................................5
+1.1   Operating Modes.......................................................................................................................5
+1.2   The Front Panel........................................................................................................................5
+1.3   Additional Indicators on the RMU..............................................................................................6
+1.3.1   The Ident Light...................................................................................................................6
+1.4   Start up.....................................................................................................................................6
+1.5   Setting the Operating Mode......................................................................................................7
+1.6   Configuration Modes.................................................................................................................7
+2   Configuration with SW1 set to 0 (PIU Mode 6/0)..............................................................................8
+2.0.1   LED usage when operating in PIU Mode.........................................................................10
+2.1   PIU Mode Digital Inputs..........................................................................................................10
+2.1.1   Digital Input Representation............................................................................................10
+2.2  PIU Mode Digital Outputs.........................................................................................................11
+2.2.1   Digital Output Representation..........................................................................................11
+2.3   PIU Mode Pulse Inputs...........................................................................................................11
+2.4   PIU Mode Serial Port..............................................................................................................12
+3   Configuration with SW1 set to F/15 (PIU Mode 5/1).......................................................................13
+4   Configuration with SW1 set to E/14 (PIU Mode 4/2).......................................................................14
+5   PIU Mode Ethernet.........................................................................................................................15
+5.1   PIU Mode - TCP/IP Setup.......................................................................................................16
+5.2   PIU Mode - Serial Setup.........................................................................................................17
+5.3   PIU Mode - Prover Setup........................................................................................................17
+5.4   PIU Mode - Config Setup........................................................................................................19
+5.5   PIU Mode - Diagnostic Screen................................................................................................21
+5.5.1   PIU Mode - Diagnostic Screen, Field Inputs....................................................................22
+5.5.2   PIU Mode - Diagnostic Screen, Field Outputs & Status...................................................23
+5.5.3   Further Explanation of the Digital Input states with and without Inversion.......................24
+5.5.4   Prover Sequence Diagram, showing the stage numbers.................................................24
+6   Introduction to RTU Mode...............................................................................................................25
+6.1   Field I/O..................................................................................................................................25
+6.1.1   The Field Inputs are:........................................................................................................25
+6.1.2   The Field Outputs are:.....................................................................................................25
+6.2   Communications to the RMU..................................................................................................25
+6.3   Ethernet to RS485 Modbus Relay for serial Field devices......................................................25
+7   Configuring RTU Mode...................................................................................................................26
+7.0.1   LED usage when operating in RTU Mode.......................................................................26
+8   RTU Mode Web Browser Interface.................................................................................................27
+8.1   RTU Mode - TCP/IP Setup......................................................................................................28
+8.1.1   Ethernet to RS485 Modbus Relay...................................................................................29
+8.2   RTU Mode - Serial Setup........................................................................................................30
+8.3   RTU Mode – Prover Setup......................................................................................................31
+8.4   RTU Mode - Config Setup.......................................................................................................32
+8.5   RTU Mode - Diagnostics.........................................................................................................35
+8.6   RTU Mode - Read Only Web Access......................................................................................36
+8.6.1   Rotary Switch SW1 Operation.........................................................................................36
+8.6.2   Example Configuration Sequence...................................................................................36
+9   RTU Modbus Interfaces..................................................................................................................38
+9.1   Serial Modbus RTU.................................................................................................................38
+9.1.1   COM2 RS485 (2-wire) Pinout..........................................................................................38
+9.1.2   COM3 RS422 (4-wire) Pinout..........................................................................................38
+9.2   Ethernet Modbus/TCP.............................................................................................................39
+9.3   Scaled 32bit Integer Modbus Slave Map.................................................................................39
+9.4   Example Modbus Messages...................................................................................................41
+10   MicroConf - Network Discovery & Configuration Tool...................................................................42
+Page 4 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 5 ===
+11   Firmware Version History.............................................................................................................45
+12   RMU Field I/O Connection Information.........................................................................................46
+1 
+Introduction
+1.1 
+Operating Modes
+The RMU has two distinct modes of operation, which are set using the front panel rotary switch. These 
+modes are PIU mode and Standard RTU Mode.
+PIU mode is designed to operate as an interface to the Quorum (previously Flowcal) TESTit & 
+PROVEit validation packages and provides a compatible RS232 serial interface from COM1.
+The Standard RTU mode does not support PIU communications mode but provides a high 
+performance, high accuracy RTU to allow PCs and PLCs to operate as a virtual flow computer or other 
+demanding data acquisition tasks. Standard RTU mode supports serial Modbus RTU, on both the 
+RS422 and RS485 ports, as well as Modbus TCP using the Ethernet connection. 
+To future-proof communications, ideally the XML communications over Ethernet should be utilized, as 
+this is a much more powerful & intuitive communications method, and eliminates all the 
+inconsistencies and numerous incompatible data formats that have been built into Modbus due to the 
+lack of control over the so called "standard". Contact the factory for more information.
+In both PIU and Standard RTU mode, the website can be accessed for debug and commissioning 
+purposes, using Ethernet TCP/IP communications, although the facilities and options available are 
+reduced in PIU mode. 
+1.2 
+The Front Panel
+The Front Aperture
+The top LED is LED1
+The middle one is LED2
+The lowest one is LED3
+The Rotary Switch SW1 is used to select the 
+operating mode, explained below.
+To the right of the rotary switch is an Ethernet port and the 
+larger hole to the right of the Ethernet port is a reset button, 
+recessed to stop accidental pressing of the reset switch.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 5 of 46
+
+=== SWCFG PAGE 6 ===
+1.3 
+Additional Indicators on the RMU
+There are four other LEDs on the hardware that can be used to inform the operator.
+There is a blue power LED adjacent to terminal block TB4, the Alarm Relay terminals.
+There are a pair of red and green LEDs adjacent to TB6 which blink to show the I/O Processor 
+communications are established.
+On the lid of the enclosure, above the recessed reset switch is a bi-color indicator, called the Ident 
+Light, as shown in the photograph below.
+1.3.1 
+The Ident Light
+The Ident Light is used to indicate the running status of the RMU.
+A 1Hz flashing green light indicates the machine is healthy, heartbeats are received from the I/O 
+processor and data is exchanged correctly.
+A 1Hz flashing red light indicates the I/O processor communications has been lost. After a retry, the 
+RMU will reset the I/O processor.
+A 5Hz flashing amber light indicates that the "Strobe Ident 
+Light" signal has been either received from MicroConf, or the 
+operator has forced the RMU to announce itself to MicroConf. 
+See Section 10. MicroConf - Network Discovery & 
+Configuration Tool for more information.
+1.4 
+Start up
+When power is applied, the blue power LED adjacent to terminal block TB4 will come on and stay on. 
+The Ident Light will flash amber once then operate as shown above and the Front LED stack will cycle 
+as shown on the right hand side.
+Page 6 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+Ident Light
+Front Panel
+
+=== SWCFG PAGE 7 ===
+1.5 
+Setting the Operating Mode
+Setting the operating mode may be a two-step process, depending upon the mode and the secondary 
+options needed. There are NO secondary options in PIU mode.
+1.6 
+Configuration Modes
+The initial configuration modes are selected by setting the rotary switch SW1 into one of the reserved 
+positions shown in Table 1 below.
+Setting the rotary switch SW1 to position 0, and power cycling or resetting 
+the unit, will start the unit in PIU Mode, with 6 Current Inputs and NO 
+Voltage Inputs.
+NOTE:
+Rotary Switch SW1 position 0 is pointing downwards. 
+Move the switch clockwise to increase the position number.
+In the photograph on the right hand side, SW1 is in position 1.
+SW1 Position Operating Mode
+0
+PIU Mode with 6 Current Inputs & 0 Voltage Inputs
+F (15)
+PIU Mode with 5 Current Inputs & 1 Voltage Input
+E (14)
+PIU Mode with 4 Current Inputs & 2 Voltage Inputs
+D (13)
+RTU Mode, Web Configuration read only, Modbus Slave Address 1
+C (12)
+RTU Mode, Full Web Configuration, Modbus Slave Address 1
+B (11)
+Reserved for factory use
+A (10)
+Reserved for future use
+9
+RTU Mode, Modbus Slave Address 9
+8
+RTU Mode, Modbus Slave Address 8
+7
+RTU Mode, Modbus Slave Address 7
+6
+RTU Mode, Modbus Slave Address 6
+5
+RTU Mode, Modbus Slave Address 5
+4
+RTU Mode, Modbus Slave Address 4
+3
+RTU Mode, Modbus Slave Address 3
+2
+RTU Mode, Modbus Slave Address 2
+1
+RTU Mode, Modbus Slave Address 1
+Table 1: Reserved Switch Positions
+Rotary switch SW1 positions 1 through 9 are reserved as serial Modbus RTU Slave addresses. In 
+addition, positions C & D are also RTU mode only and are not applicable to PIU Mode. 
+To set the unit in standard RTU mode for Modbus and XML communications, 
+see Section 6. Introduction to RTU Mode.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 7 of 46
+
+=== SWCFG PAGE 8 ===
+2 
+Configuration with SW1 set to 0 (PIU Mode 6/0)
+PIU mode with six current inputs & no voltage inputs. 
+Powering up (or resetting) the RMU with the SW1 set to position 0 enables PIU mode.
+The RMU has six Analogs inputs that can be jumper selected to be either Current (4-20mA) or Voltage 
+(1-5V) mode but only six of the eight PROVEit analog inputs can be used at the same time.
+The first four Analog Input channels (AnIn01, AnIn02, AnIn03 and AnIn04) are always used as 
+Current (4-20mA) inputs in PIU mode but AnIn05 and AnIn06 can be used as Current or Voltage 
+mode. 
+How the Analog inputs are mapped into PROVEit depends upon the rotary switch selection.
+With SW1 in position 0, there are six current inputs and zero voltage inputs. 
+If one voltage input is required, SW1 should be set to position F(15) and the unit power cycled or reset. 
+See Section 3. Configuration with SW1 set to F/15 (PIU Mode 5/1).
+If two voltage inputs are required SW1 should be set to position E(14) and the unit power cycled or 
+reset. See Section 4. Configuration with SW1 set to E/14 (PIU Mode 4/2).
+Assuming SW1 is left in position 0, then the RMU Analog channels are mapped as shown in the table 
+on the following page.
+Page 8 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 9 ===
+Analog 
+Input
+TB3 
+pins
+PROVEit 
+Function
+Comment
+AnIn01
+1 & 2
+Channel 0 (mA)
+Jumper P4 must be fitted on the P511 analog board
+AnIn02
+3 & 4
+Channel 1 (mA)
+Jumper P3 must be fitted on the P511 analog board
+AnIn03
+5 & 6
+Channel 2 (mA)
+Jumper P2 must be fitted on the P511 analog board
+AnIn04
+7 & 8
+Channel 3 (mA)
+Jumper P1 must be fitted on the P511 analog board
+AnIn05
+9 & 10
+Channel 4 (mA)
+Jumpers P6 & P8 must be fitted on the P511 analog 
+board
+AnIn06
+16 & 17 Channel 5 (mA)
+Jumpers P5 & P7 must be fitted on the P511 analog 
+board
+Channel 6 (V)
+This input should not be allocated in PROVEit when in 
+this mode
+Channel 7 (V)
+This input should not be allocated in PROVEit when in 
+this mode
+In PIU Mode 6/0, ALL jumpers on the P511 Analog board should fitted as shown in the image below.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 9 of 46
+
+=== SWCFG PAGE 10 ===
+2.0.1 
+LED usage when operating in PIU Mode
+The Front Aperture
+LED1 shows a Launch Piston Request
+LED2 shows a Return Piston Request
+LED3 indicates Volume Timer active
+2.1 
+PIU Mode Digital Inputs
+The RMU digital inputs are all individually isolated inputs. Each digital input can be considered as a 
+light bulb with series diode. The voltage must be applied in the right polarity but, because they are all 
+individually isolated, the installer has freedom to connect them in a number of ways.
+2.1.1 
+Digital Input Representation
+A digital input is active when a voltage of the correct 
+polarity is connected between the two input 
+connections and the "light bulb" is illuminated.
+In PIU mode, the use of the Digital Inputs has been allocated as shown in the table below.
+Digital
+Input
+TB5 pins
++ve & -ve
+PROVEit Function
+DIGIN01
+1 & 2
+Reset Forward (resets alternative Forward/Reverse outputs).
+This information is not transmitted to PROVEit.
+DIGIN02
+3 & 4
+Fwd Endstop. If the BiDi Prover 4-way has a switch to indicate the 
+valve has completed its forward travel, it can be connected here.
+DIGIN03
+5 & 6
+Rev Endstop. If the BiDi Prover 4-way has a switch to indicate the 
+valve has completed its reverse travel, it can be connected here.
+DIGIN04
+7 & 8
+Not currently used in PIU mode
+DIGIN05
+24 & 25
+Fault Detect.
+The state of this input is transmitted directly to PROVEit.
+DIGIN06
+26 & 27
+Leak Detect.
+The state of this input is transmitted directly to PROVEit.
+DIGIN07
+28 & 29
+Prover Ready.
+The state of this input is transmitted directly to PROVEit.
+DIGIN08
+30 & 31
+When DIGIN08 is LO, PULSEIN CH A is used as the Meter pulse 
+source for SVP. When DIGIN08 is HI, PULSEIN CH B is used.
+DIGIN09
+32 & 33
+Detector Switch (Volume_Pulse). 
+The detector switch input is used to trigger the various internal 
+counters and drives the prover sequence along.
+Page 10 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 11 ===
+2.2 PIU Mode Digital Outputs
+The RMU digital outputs are all individually isolated. Each digital output can be considered as the 
+contacts of a relay with series diode. The voltage must be applied in the right polarity. As all the 
+outputs are individually isolated, the installer has freedom to connect them in a number of ways.
+2.2.1 
+Digital Output Representation
+When the digital output is OPEN no current will flow 
+from the +ve to the -ve terminals. When the contacts 
+are CLOSED, current will flow, as long as the correct 
+polarity is observed.
+In PIU mode, the use of the Digital Outputs has been allocated as shown in the table below.
+Digital
+Output
+TB5 pins
++ve & -ve
+ProveIt Function
+DIGOUT01
+9 & 10
+Launch (500ms duration pulse).
+This output is triggered directly by PROVEit.
+DIGOUT02
+11 & 12
+Forward (Fwd) Command
+The Forward Command and Reverse Command outputs are triggered 
+alternatively by the PROVEit Launch request. These are intended for 
+use with bi-directional provers. The Fwd & Rev Command signals 
+stay active until either the associated Endstop input signal is detected 
+or the Prover FWD/REV Timeout is exceeded
+DIGOUT03
+13 & 14
+Reverse (Rev) Command See DIGOUT02 above.
+DIGOUT04
+34 & 35
+Launch (Spare). This is a duplicate of DIGOUT06.
+DIGOUT05
+36 & 37
+Return Piston (500ms duration).
+This output is triggered directly by PROVEit.
+DIGOUT06
+38 & 39
+Latched Launch
+This output is triggered by PROVEit Launch request and remains 
+active until the return piston command received from PROVEit. Use 
+this signal with the Brooks prover.
+2.3 
+PIU Mode Pulse Inputs
+Pulse Input
+TB5 pins
++ve & -ve
+ProveIt Function
+PULSEIN CHA
+15 & 16
+CH A Frequency Input
+PULSEIN CHB
+17 & 18
+CH B Frequency Input
+PERIODIN01
+19 & 20
+CH C Period Input
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 11 of 46
+
+=== SWCFG PAGE 12 ===
+2.4 
+PIU Mode Serial Port
+Serial Port
+Pin Name
+TB3 Pin
+Number
+COM1 RS232 TXOUT
+1
+COM1 RS232 RXIN
+2
+COM1 RS232 GND
+3
+Serial Port
+Configuration
+Value
+Media
+RS232
+Baud Rate
+9600
+Number of Data Bits
+8
+Parity Bits
+None
+Number of Stop Bits
+1
+Handshaking
+None
+NOTE: The RS232 Port COM1 is NOT accessible in standard RTU Mode.
+Page 12 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 13 ===
+3 
+Configuration with SW1 set to F/15 (PIU Mode 5/1)
+PIU mode with five current inputs & one voltage input.
+To set this mode, set the rotary switch SW1 to position F (15) and power cycle 
+or reset the unit.
+Analog 
+Input
+TB3 
+pins
+PROVEit 
+Function
+Comment
+AnIn01
+1 & 2
+Channel 0 (mA)
+Jumper P4 must be fitted on the P511 analog board
+AnIn02
+3 & 4
+Channel 1 (mA)
+Jumper P3 must be fitted on the P511 analog board
+AnIn03
+5 & 6
+Channel 2 (mA)
+Jumper P2 must be fitted on the P511 analog board
+AnIn04
+7 & 8
+Channel 3 (mA)
+Jumper P1 must be fitted on the P511 analog board
+AnIn05
+9 & 10
+Channel 4 (mA)
+Jumpers P6 & P8 must be fitted on the P511 analog 
+board
+Channel 5 (mA)
+This input must not be allocated in PROVEit when in 
+this mode
+Channel 6 (V)
+This input must not be allocated in PROVEit when in 
+this mode
+AnIn06
+16 & 17 Channel 7 (V)
+Jumper P5 must be removed and jumper P7 must be 
+fitted on the P511 analog board
+NOTE:
+All other I/O settings (Digital Inputs, Digital Outputs, Pulse Inputs and the Serial Port) are 
+exactly the same as in PIU Mode 6/0.
+In PIU Mode 5/1, all jumpers except for P5 should be fitted.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 13 of 46
+
+=== SWCFG PAGE 14 ===
+4 
+Configuration with SW1 set to E/14 (PIU Mode 4/2)
+PIU mode with four current inputs & two voltage input.
+To set this mode, set the rotary switch SW1 to position E (14) and power cycle or 
+reset the unit.
+Analog 
+Input
+TB3 
+pins
+PROVEit 
+Function
+Comment
+AnIn01
+1 & 2
+Channel 0 (mA)
+Jumper P4 must be fitted on the P511 analog board
+AnIn02
+3 & 4
+Channel 1 (mA)
+Jumper P3 must be fitted on the P511 analog board
+AnIn03
+5 & 6
+Channel 2 (mA)
+Jumper P2 must be fitted on the P511 analog board
+AnIn04
+7 & 8
+Channel 3 (mA)
+Jumper P1 must be fitted on the P511 analog board
+Channel 4 (mA)
+This input must not be allocated in PROVEit when in 
+this mode
+Channel 5 (mA)
+This input must not be allocated in PROVEit when in 
+this mode
+AnIn05
+9 & 10
+Channel 6 (V)
+Jumper P6 must be removed and jumper P8 must be 
+fitted on the P511 analog board
+AnIn06
+16 & 17 Channel 7 (V)
+Jumper P5 must be removed and jumper P7 must be 
+fitted on the P511 analog board
+NOTE:
+All other I/O settings (Digital Inputs, Digital Outputs, Pulse Inputs and the serial Port) are 
+exactly the same as in PIU Mode 6/0.
+In PIU Mode 4/2, all jumpers except for P5 and P6 must be fitted.
+Page 14 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 15 ===
+5 
+PIU Mode Ethernet
+Currently in PIU mode, Ethernet communications cannot be used by PROVEit or TESTit to acquire the 
+prover data, however the built-in web-server can be accessed over Ethernet and this gives access to 
+additional configuration tools and diagnostic aids.
+The Ethernet port is set to use DHCP configuration by default. However, if no DHCP server is located, 
+a fall back address of 10.255.255.255, with a netmask of 255.255.255.0 will be set.
+NOTE: 
+To speed up the internal DHCP timeout, briefly unplug and reconnect the Ethernet when 
+using a direct laptop to RMU connection. A crossed cable is not required.
+Ideally, the RMU Ethernet port should also be configured using the MicroConf zero-configuration tool, 
+a license free discovery tool available from your vendor. To configure your RMU using MicroConf,  
+see Section 10. MicroConf - Network Discovery & Configuration Tool.
+If you start a web browser (Firefox, Chrome and Safari are all recommended) and type in the address of 
+the RMU or click the "Start Web Interface" option in MicroConf, the home page will be displayed. 
+This is shown in the screenshot directly below.
+•
+The top line shows the logo, Product Name and Product Number
+•
+The next five lines are read-only system information, explained in the table below.
+RTU Mode
+This line indicates if the RMU is in PIU or RTU mode.
+Firmware 
+Version
+This is the version of firmware in the P572.
+Build Date
+Compilation date of the P572 firmware.
+TCP/IP Stack 
+Version
+Version number of the TCP/IP stack used by the P572 firmware.
+Altera Version
+This field indicates both the Gate Array Hardware design and the NIOS code 
+running in the NÅNO I/O Processor.
+Modbus Slave 
+Address
+This information is not relevant in PIU mode.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 15 of 46
+
+=== SWCFG PAGE 16 ===
+Below the five lines of information there are five buttons:
+TCP/IP Setup, Serial Setup, Prover Setup, Config Setup and Diagnostics.
+5.1 
+PIU Mode - TCP/IP Setup 
+The screenshot directly below shows the web browser view after clicking the TCP/IP Setup button.
+Authorization
+(Enter 
+password to 
+accept changes)
+To be able to change the default Ethernet TCP/IP settings, the password must be 
+entered. 
+Please contact your sales representative for the password.
+Device ID / 
+HostName
+This field defaults to P572 but can be changed to help identify multiple devices 
+when utilizing MicroConf. Whatever is entered into this field will be shown in the 
+Device ID field of MicroConf.
+IP Address
+There is a field to enter the IP addresses in IPv4 quad-dotted decimal 
+representation. This address is only used if the radio button has selected STATIC 
+address assignment. If DHCP has been selected, the address will have been 
+allocated by the DHCP server.
+IP NetMask
+The Netmask must be entered in IPv4 quad-dotted decimal representation, like an 
+IP address.
+Gateway
+The Gateway address must be entered in IPv4 quad-dotted decimal representation.
+Save & Reboot
+Clicking the large "Save & Reboot" button will apply the changes made and force a 
+reboot, but ONLY if the password entered is correct. If an incorrect password has 
+been entered, the user will be taken back to the home screen and NO changes will 
+have been made.
+Page 16 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 17 ===
+5.2 
+PIU Mode - Serial Setup
+In PIU mode, the serial communications are preset to match the default settings for PROVEit and 
+cannot be altered.
+5.3 
+PIU Mode - Prover Setup
+The screenshot directly below shows the web browser view after clicking the Prover Setup button.
+The text adjacent to the logo shows that the RMU is in PIU mode and you are viewing the Prover Setup
+The various fields are described on the page below.
+Authorization
+(Enter 
+password to 
+accept changes)
+To be able to change the Prover Setup configuration, the password must be entered. 
+Please contact your sales representative for the password
+Unless the correct password is entered, any changes made will NOT be saved when 
+the large "Save" button is pressed.
+Prover Switch 
+Debounce 
+(msec)
+The prover switch debounce time is the dead time following one switch activation, 
+before a second switch will be recognized. For a small volume prover, the default 
+figure of 300 msec (milliseconds) should be adequate, however for a ball prover, 
+this figure can be significantly extended. The time must however be less than the 
+expected minimum time between the sphere switches (detector switches).
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 17 of 46
+
+=== SWCFG PAGE 18 ===
+Prover 
+FWD/REV 
+Timeout (sec)
+In BiDi prover operation, 4-way valve control is provided by the RMU. The Fwd 
+(Forward) Command and Rev (Reverse) Command on Digital Outputs 2 & 3 are 
+intended to control the relays that drive the 4-way valve in the forward and reverse 
+direction. The Fwd or Rev Command Digital Output becomes active when 
+commanded by PROVEit and the output becomes inactive when the timeout expires 
+or associated Endstop Digital Input is activated.
+If there are no Endstop signals provided from the 4-way valve, then the timeout 
+value sets the pulse width of the Fwd and Rev Command Digital Outputs.
+If Endstop signals are provided, then the timeout must be set to be longer than the 
+longest expected time to swing the valve, and can be used to protect the motor from 
+continuous operation in the event that an Endstop input signal is not detected due to 
+a fault.
+In addition, the polarity of the Command Signals and the Endstop signals can be 
+programmed in the Config Setup menu page.
+The RMU issues a Fwd command on the first prove request following a power on, 
+then alternates between Rev and Fwd.
+Reset FWD 
+(DIGIN1)
+Should the need arise to reset the alternating Fwd and Rev sequence for what ever 
+reason, setting the Fwd Reset input active for 500 msec minimum will reset the 
+logic and ensure that the next prover cycle will activate the Fwd Command Digital 
+Output. If the Reset Logic and Valve Position radio button has been selected, 
+making the Fwd Reset digital Input active will reset the RMU logic and set the 4-
+way valve position to its reverse position.
+Save
+Clicking the large "Save" button will apply the changes made but ONLY if the 
+password entered is correct. If the incorrect password has been entered, the user will 
+be taken back to the home screen and NO changes will have been made.
+Exit
+Clicking the large "Exit" button will cancel any changes made
+Page 18 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 19 ===
+5.4 
+PIU Mode - Config Setup
+The screenshot directly below shows the web browser view after clicking the Config Setup button.
+The text adjacent to the logo shows that the RMU is in PIU mode and viewing the Config Setup.
+The various fields are described on the page below.
+Authorization
+(Enter 
+password to 
+accept changes)
+To be able to change the Input & Output settings, the password must be entered. 
+Please contact your sales representative for the password
+Unless the correct password is entered, any changes made will NOT be saved when 
+the large "Save" button is pressed.
+RawOut Mode
+If RawOut Disabled is selected, the incoming Raw Pulse Bus Input frequency and 
+Pulse Count (Modulo 65536) will be displayed on the diagnostic page.
+If the RawOut Meter Pulse ChA mode is selected, the Raw Pulse Bus will be set in 
+output mode, and an identical copy of the pulse coming in on the Flow Meter Pulse 
+Input Channel A will be driven Out.
+If the RawOut Meter Pulse ChB mode is selected, Flow Meter Pulse Input Channel 
+B will be driven Out.
+NOTE: The changes are NOT applied dynamically but only when the correct 
+password has been entered and the Save button clicked.
+Prover Mode
+There are two options selected by radio buttons. The default Detector Based 
+(S1/S2) is used for switch based proving. The Encoder Based proving requires a 
+high resolution linear encoder. If this mode is selected, the Prover Setup menu is 
+also modified. Please contact your Sales Representative for more information on 
+encoder based proving.
+DigIn 1-8 
+Invert
+There are eight tick boxes, with the associated Digital Input number to the right of 
+each tick box. Clicking a tick box puts a tick into the box, and this indicates that the 
+digital input for that particular channel will be inverted, assuming the correct 
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 19 of 46
+
+=== SWCFG PAGE 20 ===
+password is entered, and the "Save" button clicked. Clicking a tick box multiple 
+times, toggles the tick indication.
+Detector Switch 
+/ DigIn 9 Invert
+The Detector Switch / DigIn 9 Invert is similar to the invert function for Digital 
+Inputs 1 to 8 but as well as inverting the read-back value, it also sets the prover to 
+use the falling edge of the Detector Switch (sphere) input rather than the rising 
+edge.
+DigOut 1-6 
+Invert
+There are six tick boxes, with the associated Digital Output number to the right of 
+each tick box. Clicking a tick box puts a tick into the box, and this indicates that the 
+digital output for that particular channel will be inverted, assuming the correct 
+password is entered, and the "Save" button clicked. Clicking a tick box multiple 
+times, toggles the tick indication.
+Save
+Clicking the large "Save" button will apply the changes made but ONLY if the 
+password entered is correct. If the incorrect password has been entered, the user will 
+be taken back to the home screen and NO changes will have been made.
+Exit
+Clicking the large "Exit" button will cancel any changes made
+Page 20 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 21 ===
+5.5 
+PIU Mode - Diagnostic Screen
+The screenshot directly below shows the web browser view after clicking the diagnostic screen button.
+This is entirely read-only, for information, so there is no Save button at the bottom of the screen.
+The left hand side of the screen shows the inputs and the top half of the right hand side are the outputs. 
+The lower RHS is additional Input/Prover info.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 21 of 46
+
+=== SWCFG PAGE 22 ===
+5.5.1 
+PIU Mode - Diagnostic Screen, Field Inputs
+DIGIN1-8 and 
+Detector/ 
+DIGIN9
+The Digital Inputs are “hard coded” in PIU mode, and their function name is added 
+to the description.
+These nine fields display two pieces of information for each digital input.
+The first word OFF or ON shows the electrical levels going into the digital input 
+circuit, and indicates if the "light bulb" is turned on or off.
+The second word LO or HI shows the input logic state following the DigIn invert 
+function described in the Section 5.2. PIU Mode - Config Setup.
+If LO, then the signal is not active. This could be because the "light bulb" is turned 
+OFF and there is no inversion selected, as DIGIN6 on the screenshot on the 
+previous page, and the background is shown as gray. The alternative is that the 
+"light bulb" is turned ON and inversion has been selected, as shown for DIGIN7, 
+with the yellow background.
+If HI, then the signal is active. This could be because the "light bulb" is turned ON 
+and there is no inversion selected, as DIGIN9 on the screenshot on the previous 
+page, and the background is shown as green. The alternative is that the "light bulb" 
+is turned OFF and inversion has been selected, as shown for DIGIN8, with the cyan 
+background.
+ANIN1-4
+In PIU Mode, these four fields show the current being driven into Analog Inputs 1 
+to 4. The units will always show milliamps (mA).
+In RTU mode, these channels can be selected to be either 4-20mA or 1-5V Mode, 
+but note the P511 jumpers must ALSO be set to current or voltage mode. 
+PRT2/ANIN5
+PRT1/ANIN6
+In PIU Mode, these two fields show the current or voltage being driven into Analog 
+Inputs 5 and 6. If PIU Mode 6/0 (SW1 = 0) is selected, both these fields will show 
+the units as milliamps (mA). 
+PIU Mode 5/1 (SW1 = F/15) is selected, ANIN5 will show the unit as milliamps 
+(mA) and ANIN6 will show the units as volts (V).
+PIU Mode 4/2 (SW1 = E/14) is selected, both these fields will show the units as 
+volts (V).
+In RTU mode, these these channels can be selected to be 4-20mA, 1-5V or 4-wire 
+RTD Mode but note the P511 jumpers must ALSO be set to current, voltage or 
+RTD mode. In RTD mode, the reading is the resistance in Ohms (Ω).
+FREQA-B
+These two fields show the frequency of the Flow Meter Pulse Inputs channel A & B 
+in Hertz (Hz) to 3 decimal places.
+FREQ RAW
+This field will show the frequency of the Raw Pulse Bus, Rawin in Hertz (Hz) to 3 
+decimal places.
+DENSITY1-2
+These two fields show the period of the Density Meter Inputs in microseconds (µs).
+Page 22 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 23 ===
+5.5.2 
+PIU Mode - Diagnostic Screen, Field Outputs & Status
+DIGOUT1-6
+The Digital Outputs are “hard coded” in PIU mode, and their function name is 
+added to the description, for example Digout 1 is the Launch command.
+These six fields show the commanded value sent to the Digital Output Circuitry. 
+The actual output may be opposite the software value, if the DigOut invert function 
+described in the Section 5.2. PIU Mode - Config Setup has been used.
+ALARM 
+RELAY
+In PIU mode the Alarm Relay will show "ALARM SET" on a red background if the 
+communications to PROVEit has been lost for more than 30 seconds. Once the 
+communications are re-established, the background will be cleared and the text will 
+state "NO FAULT".
+In RTU mode, the Alarm Relay is controlled by the Modbus Communications. It 
+will start in Alarm Set position and must be cleared once the controlling device is 
+operating correctly.
+ANOUT1-2
+These two fields show the value that the Analog Outputs have been commanded to 
+drive. This figure is in milliamps (mA). 
+COUNTA-B
+These two fields show a 16 bit (modulo 65536) figure for the number of pulses 
+counted on the Flow Meter Pulse inputs for channels A & B.
+COUNT RAW
+This field show a 16 bit (modulo 65536) figure for the number of pulses counted on 
+the Raw Pulse Bus, Rawin.
+PROVER 
+STATE
+This field reflects the status of the prover state machine in the RMU Altera Gate 
+Array Dual Chronometry block. The values are:
+0 : Waiting for Start
+1 : Waiting for SS1 rising edge
+2 : Got SS1 rising edge, waiting for subsequent PULSEIN rising edge
+3 : Got SS1 rising edge and subsequent PULSEIN rising edge, waiting for 
+SS1 falling edge
+4 : Got SS1 falling edge, no PULSEIN rising edge since state 2.
+5 : Got SS1 falling edge and PULSEIN rising edge, waiting for SS2
+6 : Got SS2 rising edge and waiting for PULSEIN N+1 rising edge
+7 : Done, got SS2 rising edge and PULSEIN N+1 rising edge. Waiting for Start
+8 : Abort. Waiting for Start
+The diagram on the next page shows the timing and generation of the states. Note 
+many of these states are either fleeting or not in a normal prove, so not all states will 
+be seen.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 23 of 46
+
+=== SWCFG PAGE 24 ===
+5.5.3 
+Further Explanation of the Digital Input states with and without Inversion
+Digital Input – Naming Convention
+Diagnostic
+Inversion selected?
+Electrical Input Level
+Reported State
+OFF-LO
+No Inversion Selected
+Less than 3 Volts
+Inactive Signal
+OFF-HI
+Yes, Input Inverted
+Less than 3 Volts
+Active Signal
+ON-HI
+No Inversion Selected
+More than 10 Volts
+Active Signal
+ON-LO
+Yes, Input Inverted
+More than 10 Volts
+Inactive Signal
+5.5.4 
+Prover Sequence Diagram, showing the stage numbers
+This ends the PIU Mode configuration. 
+Next section applies to using the hardware in RTU Mode.
+Page 24 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+SS1 
+Rising 
+Edge
+PULSEIN 1 
+Rising Edge
+PULSEIN
+Sphere Switch
+Issue 
+Prove 
+Start
+0      1               2  3  5 (if  pulse seen) 
+                                 4 (if  NO  pulse is seen)
+SS1 
+Falling 
+Edge
+SS2 
+Rising 
+Edge
+SS2 
+Falling 
+Edge
+6  7 
+                8 
+Stage Numbers whilst in Prove Cycle
+PULSEIN N+1 
+Rising Edge
+
+=== SWCFG PAGE 25 ===
+6 
+Introduction to RTU Mode
+When the RMU is operated in RTU Mode, it is a high accuracy data acquisition unit, which can collect 
+all the field data needed for a Liquid or Gas measurement stream as well as a Prover Modbus slave.
+In addition, the Ethernet to RS485 Modbus Relay feature also allows intelligent meters, such as 
+Coriolis and Ultrasonic meters with serial Modbus ports to be connected to the RMU, and ALL the data 
+to be transported over the Ethernet link utilizing Modbus TCP, for a highly cost effective and tightly 
+integrated data acquisition solution. 
+6.1 
+Field I/O
+For full information on the I/O see Nano-RTU Technical Installation Manual.pdf.
+6.1.1 
+The Field Inputs are:
+•
+Nine Digital Inputs, each individually isolated
+•
+Two optically isolated Meter Pulse Inputs than can also be combined for Dual-Pulse
+•
+Two frequency mode isolated Densitometer Inputs
+•
+Six high accuracy Analog Inputs, two can be RTD Inputs, each individually isolated
+•
+One Raw Pulse Bus Input
+6.1.2 
+The Field Outputs are:
+•
+Six Digital Outputs, each individually isolated
+•
+Two Pulse Outputs, each individually isolated
+•
+Alarm relay with both normally open and normally closed contacts
+•
+Two current mode Analog Outputs, individually isolated
+•
+One Raw Pulse Bus Output
+6.2 
+Communications to the RMU
+Connections can be made to the RMU using Modbus TCP over the Ethernet link and there are two 
+serial ports which both support Modbus RTU.
+The RMU supports two different Modbus maps for greatest flexibility. A concise list is included in the 
+manual but for full information see the P572 Modbus Address Map Manual.pdf
+6.3 
+Ethernet to RS485 Modbus Relay for serial Field devices
+If the Ethernet to RS485 Modbus Relay feature has been enabled, any Modbus polls that DO NOT 
+match the Modbus address of the RMU will be relayed to the RS485 Port COM2. The serial port 
+settings can be changed, see Section 5.2. PIU Mode - Serial Setup.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 25 of 46
+
+=== SWCFG PAGE 26 ===
+7 
+Configuring RTU Mode
+The rotary switch SW1 is used extensively to configure the RMU in RTU mode.
+Selecting rotary switch SW1 into position C(12) and cycling the power, or resetting the 
+unit, forces the unit to RTU Mode with read and write web server access. 
+This defaults the Modbus Slave address to Address 1 on both the two serial ports 
+(running Modbus RTU serial) and the Ethernet port (running Modbus TCP).
+If a Modbus Slave address other than 1 is required, move the rotary switch SW1 to the position that 
+matches the desired Modbus slave address, and power cycle or reset the unit. This will retain the read 
+and write access.
+Selecting rotary switch SW1 into position D(13) and cycling the power, or resetting the 
+unit, forces the unit to RTU Mode with read-only web server access.
+This defaults the Modbus Slave Address to 1 on both the two serial ports (running 
+Modbus RTU serial) and the Ethernet port (running Modbus TCP).
+If a Modbus Slave address other than 1 is required, move the rotary switch SW1 to the position that 
+matches the desired Modbus slave address, and power cycle or reset the unit. This will retain the read-
+only access.
+NOTE:
+Only Modbus Slave address 1 through 9 (switch positions 1 through 9) are supported. 
+7.0.1 
+LED usage when operating in RTU Mode
+The Front Aperture
+LED1 shows validated data received on COM2, the 
+RS485 port. When running as an Ethernet to RS485 
+Modbus Relay, it will flash to indicate a valid 
+response from the Modbus serial slave device. 
+LED2 shows validated data received on COM3.
+LED3 shows validated data received on Ethernet.
+NOTE: 
+The tell-tale LEDs between terminal block TB2 and TB3 show the actual communications 
+activity, whether the data received is valid or not.
+The RMU is now running and the configuration setting can now be applied using the built-in web 
+server.
+Page 26 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 27 ===
+8 
+RTU Mode Web Browser Interface
+The Ethernet port is set to use DHCP configuration by default. However, if no DHCP server is located, 
+a fall back address of 10.255.255.255, with a netmask of 255.255.255.0, will be set.
+NOTE: 
+To speed up the internal DHCP timeout, briefly unplug and reconnect the Ethernet when 
+using a direct laptop to RMU connection. A crossed cable is not required.
+The RMU Ethernet port can also be configured using the MicroConf zero-configuration tool, a 
+license-free discovery tool available from your vendor. To configure your RMU using MicroConf, 
+see Section 10. MicroConf - Network Discovery & Configuration Tool.
+If you start a web browser (Firefox, Chrome and Safari are all recommended) and type in the address of 
+the RMU or click the "Start Web Interface" option in MicroConf, the home page will be displayed. 
+This is shown in the screenshot directly below.
+•
+The top line shows the logo, Product Name (NANO RTU2) and PCB Reference.
+•
+The next six lines are read-only, for information, which are explained in the table below.
+RTU Mode
+This line indicates if the RMU is in PIU or RTU mode.
+Firmware 
+Version
+This is the version of firmware in the P572.
+Build Date
+Compilation date of the P572 firmware.
+TCP/IP Stack 
+Version
+Version number of the TCP/IP stack used by the P572 firmware.
+Altera Version
+This field indicates both the Gate Array Hardware design and the NIOS code 
+running the NÅNO I/O Processor.
+Serial Modbus 
+Slave Address
+This shows the currently selected Modbus slave address, from the front panel rotary 
+switch SW1.
+•
+Below the five lines of information, there are five buttons: TCP/IP Setup, Serial Setup, Prover 
+Setup, Config Setup and Diagnostics. These are detailed in the following pages.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 27 of 46
+
+=== SWCFG PAGE 28 ===
+8.1 
+RTU Mode - TCP/IP Setup
+Clicking the TCP/IP Setup button 
+will take you to the setup menu shown below.
+Authorization
+(Enter password 
+to accept 
+changes)
+To be able to change the default Ethernet TCP/IP settings, the password must be 
+entered. 
+Please contact your sales representative for the password.
+Device ID / 
+HostName
+This field defaults to P572 but can be changed to help identify multiple devices 
+when utilizing MicroConf. It is shown as the Device ID field of MicroConf.
+IP Address
+The IP addresses can be entered in IPv4 quad-dotted decimal representation if the 
+radio button has selected STATIC address assignment. If DHCP has been selected, 
+the address will have been allocated by the DHCP server.
+IP NetMask
+The Netmask must be entered in IPv4 quad-dotted decimal representation, like an 
+IP address.
+Gateway
+The Gateway address must be entered in IPv4 quad-dotted decimal representation.
+Modbus Port 
+No
+This is the Modbus TCP Port number. The value is defaulted to 502, as this is the 
+commonly used port address.
+Modbus Relay 
+Function
+See Section 8.1.1 - Ethernet to RS485 Modbus Relay below.
+Page 28 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 29 ===
+Save & Reboot
+Clicking the large "Save & Reboot" button will apply the changes made and force a 
+reboot, but ONLY if the password entered is correct. If an incorrect password has 
+been entered, the user will be taken back to the home screen and NO changes will 
+have been made.
+Exit
+Clicking the large "Exit" button will cancel any changes made
+8.1.1 
+Ethernet to RS485 Modbus Relay 
+In addition to the high fidelity data acquisition performed by the RMU itself, the RMU can also act as a 
+Modbus serial communications gateway to multiple third-party devices. These could be for example a 
+Coriolis meter to collect the observed density, Reynolds number and the range of diagnostic 
+information that is available. Additional Modbus Serial devices can also be connected to further expand 
+the functionality.
+This feature allows the RMU to be the single data acquisition device, with a simple Modbus TCP 
+interface using an Ethernet connection to a PC or SCADA system.
+If the Ethernet to RS485 Modbus Relay function is enabled, any Modbus TCP packets received which
+DO NOT match the Modbus Slave Address selected for the RMU, will be passed to the COM2 RS485 
+serial port as Modbus RTU.
+If the Ethernet to RS485 Modbus Relay function is disabled, any Modbus TCP packets which do not 
+match the selected Modbus Slave Address of the RMU will be ignored.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 29 of 46
+Density 
+Reynolds Number 
+Diagnostics
+Thermocouple 
+Power Relays 
+Additional I/O
+COM2: 
+RS485
+RS485
+RS485
+Mass 
+Pulses
+PT
+TT
+Ethernet 
+Modbus TCP
+SCADA System 
+Trust 
+Infilink 
+Red Lion
+
+=== SWCFG PAGE 30 ===
+8.2 
+RTU Mode - Serial Setup
+Clicking on the Serial Setup button  
+opens the menu shown below.
+Page 30 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 31 ===
+8.3 
+RTU Mode – Prover Setup
+Clicking on the Prover Setup button                        opens the menu shown below.
+When using the RMU for meter proving, the source of the pulses for the prover electronics can be 
+selected. 
+Note, when using Dual Chronometry, avoid the Dual Pulse signal options.
+To be able to change the Prover Setup configuration menu, the password must be entered. Please 
+contact your sales representative for the password.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 31 of 46
+
+=== SWCFG PAGE 32 ===
+8.4 
+RTU Mode - Config Setup
+Clicking on the Config Setup button 
+opens the menu shown below.
+Page 32 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 33 ===
+Authorization
+(Enter password 
+to accept 
+changes)
+To be able to change the Input & Output and Operational settings, the password 
+must be entered. Please contact your sales representative for the password.
+Unless the correct password is entered, any changes made will NOT be saved when 
+the large "Save" button is pressed.
+Config Word
+This field is unique for every combination of configuration setting, so if the Config 
+word from one machine matches that of another unit, they are configured 
+identically in software.
+Pulse Out 1 
+Mode
+Normally this would be set as Pulse Output mode but for testing purposes, the 
+outputs can be set as Open (Always 0) or Closed (Always 1).
+Pulse Out 2 
+Mode
+Normally this would be set as Pulse Output mode but for testing purposes, the 
+outputs can be set as Open (Always 0) or Closed (Always 1).
+Meter Pulse 
+Mode
+There are 3 modes that the Meter Pulse Inputs can be set to.
+In Twin Single Stream mode, Pulse Input Ch A and Ch B are totally independent.
+In Dual Pulse (Level B) both channels are used together, giving Good & Bad pulse 
+counts. Missing pulses are not re-inserted in Level B mode.
+In Dual Pulse (Level A) both channels are used together, giving Good & Bad pulse 
+counts. Missing pulses are re-inserted in Level A mode.
+Rawout Mode
+If RawOut Disabled is selected, the incoming Raw Pulse Bus Input frequency and 
+Pulse Count (Modulo 65536) will be displayed on the diagnostic page.
+If the RawOut Meter Pulse ChA mode is selected, the Raw Pulse Bus will be set in 
+output mode, and an identical copy of the pulse coming in on the Flow Meter Pulse 
+Input, Channel A will be driven out.
+If the RawOut Meter Pulse ChB mode is selected, Flow Meter Pulse Input, Channel 
+B will be driven out.
+ANIN1
+The P511 Analog Board has jumper settings to determine if each input is a 4-20 mA 
+or a 1-5 V input. The software configuration must be set to match the physical 
+hardware. See the Nano-RTU Technical Installation Manual for more information.
+ANIN2
+See ANIN1 above.
+ANIN3
+See ANIN1 above.
+ANIN4
+See ANIN1 above.
+ANIN5
+See ANIN1 above.
+ANIN6
+See ANIN1 above.
+DigIn 1-8 
+Invert
+There are eight tick boxes, with the associated Digital Input number to the right of 
+each tick box. Clicking a tick box puts a tick into the box, and this indicates that the 
+digital input for that particular channel will be inverted, assuming the correct 
+password is entered, and the "Save" button clicked. Clicking a tick box multiple 
+times, toggles the tick indication.
+Detector Switch 
+/ DigIn 9 Invert
+The Detector Switch / DigIn 9 Invert is similar to the invert function for Digital 
+Inputs 1 to 8 but as well as inverting the read-back value, it also sets the prover to 
+use the falling edge of the Detector Switch (sphere) input rather than the rising 
+edge.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 33 of 46
+
+=== SWCFG PAGE 34 ===
+DigOut 1-6 
+Invert
+There are six tick boxes with the associated Digital Output number to the right of 
+each tick box. Clicking a tick box puts a tick into the box, and this indicates that the 
+digital output for that particular channel will be inverted, assuming the correct 
+password is entered, and the "Save" button clicked. Clicking a tick box multiple 
+times, toggles the tick indication.
+Save
+Clicking the large "Save" button will apply the changes made but ONLY if the 
+password entered is correct. If the incorrect password has been entered, the user will 
+be taken back to the home screen and NO changes will have been made.
+Exit
+Clicking the large "Exit" button will cancel any changes made
+NOTE: 
+The changes are NOT applied dynamically, but only when the correct password has been 
+entered and the Save button clicked.
+Page 34 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 35 ===
+8.5 
+RTU Mode - Diagnostics
+Clicking on the Diagnostic button takes you to the 
+diagnostic page shown below.
+For a description of the fields on the in RTU mode, please refer to Section 5.4.1. Diagnostic Page 
+Description.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 35 of 46
+
+=== SWCFG PAGE 36 ===
+8.6 
+RTU Mode - Read Only Web Access
+In many installations, once the RMU has been configured using the website, it is imperative the settings 
+are not accidentally, or maliciously, changed remotely. This is the purpose of the Read Only mode. The 
+website can still be accessed, and the configured settings can be viewed, but without physical access to 
+the RMU, these settings cannot be altered.
+8.6.1 
+ Rotary Switch SW1 Operation
+If the rotary switch SW1 is set to position C when power is applied, or when reset, the write-access 
+flag, stored in non volatile memory is set to ENABLED, and the Modbus slave address is set to 1. The 
+operator will now have full read and write access to the RMU configuration.
+If the rotary switch SW1 is set to position D when power is applied, or when reset, the write-access 
+flag, stored in non volatile memory is set to DISABLED, and the Modbus slave address is set to 1. The 
+operator will now only have read access to the RMU configuration.
+No other positions of the rotary switch SW1 can alter the value of the write-access flag. Other rotary 
+switch positions can however alter the Modbus slave address. The Modbus slave address can be 
+changed by setting the rotary switch SW1 to positions 1 through 9. 
+NOTE:
+The "new" Modbus Slave Address will not be used until the power is cycled or the unit 
+reset. However, if the rotary switch SW1 is moved whilst the unit is operating, it will then 
+announce itself on the network, using the Zero-Configuration networking method, and will 
+be highlighted in MicroConf (returning SW1 to its original position will clear the 
+announcement).
+See Section 10. MicroConf - Network Discovery & Configuration Tool
+8.6.2 
+Example Configuration Sequence
+In this example, the operator needs a second RTD for the particular application, the Modbus Slave 
+address need to be set to 3 and the configuration locked in by selecting Read Only web access. 
+To achieve, the sequence of steps required is as follows:
+a) Turn the rotary switch SW1 to position C, and apply power (or reset if already 
+running). The write-access flag, stored in non volatile memory is now set to 
+ENABLED.
+The operator now logs into the website, navigates to the Config Setup page and makes the 
+changes needed for the application. The Configuration settings are stored in non volatile 
+memory, assuming the correct Authorization password has been supplied.
+b) The operator now turns the rotary switch SW1 to position D, and cycles the power 
+(or resets the RMU). The write-access flag, stored in non volatile memory is now 
+set to  DISABLED.
+c) The operator now turns the rotary switch SW1 to position 3, and cycles the power (or resets the 
+RMU). The write-access flag remains set as DISABLED, and the Modbus slave address will 
+now be set to 3. 
+Page 36 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 37 ===
+Navigating back to the home page, the screenshot below will show Read Only Mode and the changed 
+Modbus slave address
+In read-only mode, no changes can be made to the configuration but the diagnostic page can be 
+accessed to help with system debugging.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 37 of 46
+Read Only
+Modbus Slave Address
+
+=== SWCFG PAGE 38 ===
+9 
+RTU Modbus Interfaces
+There are three communications ports available on the RMU in Modbus standard RTU Mode.
+There are two serial ports and one Ethernet port.
+9.1 
+Serial Modbus RTU
+There are two serial ports, COM2 as RS485 (2-wire) and COM3 as RS422 (4-wire), that can be 
+connected as a 2-wire RS485 port. 
+Serial Port
+Configuration
+Default
+Value
+Media
+RS422 or RS485
+Baud Rate
+19200
+Number of Data Bits
+8
+Parity Bits
+None
+Number of Stop Bits
+1
+Handshaking
+None
+9.1.1 
+COM2 RS485 (2-wire) Pinout
+Serial Port
+Pin Name
+TB3 Pin
+Number
+COM2 RS485 TxRx+
+11
+COM2 RS485 TxRx-
+12
+Screen
+6
+9.1.2 
+COM3 RS422 (4-wire) Pinout
+Serial Port
+Pin Name
+TB3 Pin
+Number
+COM3 RS422 TXOUT+
+7
+COM3 RS422 TXOUT-
+8
+COM3 RS422 RXOUT+
+9
+COM3 RS422 RXOUT-
+10
+Screen
+6
+Page 38 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 39 ===
+9.2 
+Ethernet Modbus/TCP
+The Ethernet link is intended to be used as a point to point link but if the Modbus Master drops the link 
+between polls, other devices may be interleaved with the original.
+9.3 
+Scaled 32bit Integer Modbus Slave Map
+The RMU supports a fully contiguous map, allowing all the data to be collected in a single poll. The 
+data is in scaled 32bit Integer (3210) format which allow the data to be "human" readable. 
+In the table below, the heading labeled ATT. means attribute and defines is the data is Read Only (RO) 
+or has both Read and Write (R/W) attributes.
+NV indicates if the R/W value is stored in Non-Volatile memory, so will be remembered following a 
+power cycle. A "YES" indicates that the value is stored.
+Int32 denotes a 32bit extended Modbus integer in 3210 byte order.
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+Value
+2000
+Int32
+P513 Hardware Version
+RO
+n/a
+0 to 65,535
+Not Scaled
+2002
+Int32
+P513 Software Version
+RO
+n/a
+0 to 65,535
+Not Scaled
+2004
+Int32
+P572 Firmware Version
+RO
+n/a
+0 to 65,535
+Not Scaled
+2006
+Int32
+Reserved
+RO
+n/a
+-
+2008
+Int32
+System Status (Bits: 0-7)
+RO
+n/a
+0 to 255
+Binary
+2010
+Int32
+Digital Inputs (Bits: 0-8)
+RO
+n/a
+0 to 511
+Binary
+2012
+Int32
+Prover Status
+RO
+n/a
+0 to 8
+Binary
+2014
+Int32
+Message Id (2Hz)
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2016
+Int32
+Reserved
+RO
+n/a
+-
+2018
+Int32
+Good / A pulse count
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2020
+Int32
+Reserved
+RO
+n/a
+-
+2022
+Int32
+Bad / B pulse count
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2024
+Int32
+Reserved
+RO
+n/a
+-
+2026
+Int32
+RAWIN pulse count
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2028
+Int32
+Prover PULSEIN pulse count
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2030
+Int32
+Prover PULSEIN SW1-2 (gated)
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2032
+Int32
+Prover Time SW1-2 (gated) 
+(x100ns)
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2034
+Int32
+Prover Time P1-N1 (gated) 
+(x100ns)
+RO
+n/a
+0 to 4,294,967,295 
+Not Scaled
+2036
+Int32
+Reserved
+RO
+n/a
+-
+2038
+Int32
+Good / A frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2040
+Int32
+Bad / B frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2042
+Int32
+RAWIN frequency (0 to 10kHz)
+RO
+n/a
+0 to 1,000,000,000
+Hz x 100,000
+2044
+Int32
+Reserved
+RO
+n/a
+-
+2046
+Int32
+Density 1 period (50Hz to 5kHz)
+RO
+n/a
+0 to 2,000,000,000
+μs x 100,000s x 100,000
+2048
+Int32
+Density 2 period (50Hz to 5kHz)
+RO
+n/a
+0 to 2,000,000,000
+μs x 100,000s x 100,000
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 39 of 46
+
+=== SWCFG PAGE 40 ===
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+Value
+2050
+Int32
+Reserved
+RO
+n/a
+-
+2052
+Int32
+Analog Input 1 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2054
+Int32
+Analog Input 2 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2056
+Int32
+Analog Input 3 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2058
+Int32
+Analog Input 4 (0 to 22mA)
+RO
+n/a
+0 to 2,500,000,000
+mA x 1,000,000
+2060
+Int32
+Analog Input 5 (0 to 22mA) or
+PRT2 (50 to 250Ohms)
+RO
+n/a
+0 to 2,500,000,000
+or 50,000,000 to 
+250,000,000
+mA x 1,000,000
+or
+Ohm x 1,000,000
+2062
+Int32
+Analog Input 6 (0 to 22mA) or
+PRT1 (50 to 250Ohms)
+RO
+n/a
+0 to 2,500,000,000
+or 50,000,000 to 
+250,000,000
+mA x 1,000,000
+or
+Ohm x 1,000,000
+2064
+Int32
+Analog Channel Status
+RO
+n/a
+0 to 4,095
+Binary
+2066
+Int32
+Reserved
+RO
+n/a
+-
+2068
+Int32
+DAC 1 (0 to 21mA)
+R/W
+No
+0-24,000 
+mA x1,000
+2070
+Int32
+DAC 2 (0 to 21mA)
+R/W
+No
+0-24,000 
+mA x1,000
+2072
+Int32
+Digital Outputs (Bits 0-6)
+R/W
+No
+0 to 127
+Binary
+2074
+Int32
+Pulse Output 1 bucket
+R/W
+No
+0 to 65,535
+Not Scaled
+2076
+Int32
+Pulse Output 2 bucket
+R/W
+No
+0 to 65,535
+Not Scaled
+2078
+Int32
+Prover Configuration (1=Run)
+R/W
+No
+0 or 1
+Binary
+2080
+Int32
+Reserved (Writes are ignored)
+R/W
+No
+-
+2082
+Int32
+Purge Pulse Output #1 (1=Reset)
+R/W
+No
+0 or 1
+Binary
+2084
+Int32
+Purge Pulse Output #2 (1=Reset)
+R/W
+No
+0 or 1
+Binary
+2086
+Int32
+System Configuration
+[Bits: 0-7 Pulses]
+R/W
+YES 0 to 256
+Binary
+2088
+Int32
+System Configuration
+[Bits 0-15 Analogs]
+R/W
+YES 0 to 65,535
+Binary
+2090
+Int32
+Pulse Output 1 width (1 to 
+2047ms)
+R/W
+YES 1 to 2,047
+Not Scaled
+2092
+Int32
+Pulse Output 2 width (1 to 
+2047ms)
+R/W
+YES 1 to 2,047
+Not Scaled
+2094
+Int32
+Prover OneShot Count (1ms 
+debounce counts)
+R/W
+YES 0 to 65,535
+Not Scaled
+2096
+Int32
+RAWOUT Mode (Bits 0-1)
+R/W
+No
+0 to 3
+Binary
+2098
+Int32
+Prover Source Selection (Bits 0-2)
+R/W
+No
+0 to 7
+Binary
+For a full bit by bit description of this Modbus map, refer to the P572 Modbus Address Map Manual.
+Page 40 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 41 ===
+9.4 
+Example Modbus Messages
+Poll for Good Pulse Count (Channel A) – INT32, 3210 byte order at base address 2018
+Request:
+TX: 01 03 07 E2 00 02 65 49
+where;
+Slave Address = 01
+Function Code = 03
+Starting Address = 07 E2 (Decimal 2018)
+Quantity of Registers = 00 02
+Checksum = 65 49
+Response:
+RX: 01 03 04 00 08 9B 53 50 FC
+where;
+Slave Address = 01
+Function Code = 03
+Byte Count = 04
+Data Register 2018 Value =  00 08 (MS Register)
+Data Register 2019 Value =  9B 53 (LS Register)
+Checksum = 50 FC
+Register 2018 represents the higher 16 bits of the INT32, Register 2019 represents the lower 16 bits of 
+the INT32
+The combined hexadecimal register data 00089B53 equates to a decimal value of 564051
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 41 of 46
+
+=== SWCFG PAGE 42 ===
+10 
+MicroConf - Network Discovery & Configuration Tool
+When used with a MicroCube Flow Computer, MicroConf allows the operator to load applications and 
+a host of additional tasks. When used with the RMU, only the following functions are available.
+•
+Strobe Ident Lights
+•
+Start Web Interface
+•
+Configure
+A screenshot of a Windows PC running MicroConf is shown below.
+The MicroConf program shows two panes when started. The upper pane is used to display machines 
+that are being actively managed, with known and fixed IP address, and the lower pane shows all the 
+machines that have been discovered using the NÅNO Zero-Configuration networking.
+Each machine is shown on a separate row and there are 10 columns of information shown for each 
+machine, which are explained in the table below.
+NOTE:
+MicroConf has the concept of Local and Remote machines. A local machine is one that is 
+available over an office LAN, which supports the full range of TCP/IP commands and 
+allows broadcast messages to be sent. A remote machine is one with more limited 
+connectivity, internet connected but outside the corporate firewall and hence having 
+restricted TCP/IP connectivity and with broadcast messages filtered out.
+The NÅNO Zero-Configuration networking eliminates the highly frustrating and convoluted methods 
+needed to set up some Ethernet enabled equipment. There is no requirement to change either your 
+PC/Laptop's IP address or subnet in order to discover a NÅNO and change its network settings, even if 
+it has been set to address outside the range used on the LAN network.
+Page 42 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 43 ===
+IP Address
+This column shows the IP addresses in IPv4 quad-dotted decimal representation.
+Device ID 
+(Hostname)
+The Device ID is a user selectable field that can be used to differentiate between 
+machines.
+Application 
+Name
+This field is fixed and will show NANO PIU or NANO RTU2, depending upon the 
+configuration mode selected by rotary switch SW1.
+Application 
+Version
+This field is not populated for the RMU.
+DataSet
+This field is not populated for the RMU.
+Firmware
+This column shows the version number of the RMU firmware resident.
+I/O 
+Firmware
+This column shows the version number of the I/O processor firmware resident.
+System ID
+This field shows the MAC address of the RMU.
+ETH Port
+This field will always be a 1 for the RMU (as there is only 1 Ethernet port).
+Comment
+This shows the comment is changed in the Configure right-click option.
+MicroConf is a deceptively powerful program. 
+Although it only appears to have two similar panes, 
+without tabs or menu items, access to the additional 
+functions is obtained by the use of the right-click 
+mouse button. 
+If you left-click on the line which shows the RMU 
+machine you wish to interact with, the line will be 
+highlighted. 
+If you now right-click whilst pointing at the 
+highlighted line, the menu shown here on the right 
+will be displayed. All of the menu items are shown as 
+available. If you do not highlight a line and right click 
+over white space on the screen, then the menu 
+displayed will have most of the items shown "grayed-
+out" indicating these options are not available for use. 
+For example you cannot install an application if you 
+have not selected a target device.
+It is possible to select more than one unit using the shift and control keys, in line with the usual 
+Windows conventions. When you right-click after selecting more than one unit, you will get a different 
+selection of options in the right-click menu.
+Poll for Details
+This is not relevant when using the RMU.
+Select All
+This is not relevant when using the RMU.
+View
+This is not relevant when using the RMU.
+Install/Retrieve 
+Files.
+This is not relevant when using the RMU.
+Licensing
+This is not relevant when using the RMU.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 43 of 46
+
+=== SWCFG PAGE 44 ===
+Start Web 
+Interface
+This item is only available when one machine has been selected. Selecting this 
+option will start the PC/Laptop's default browser and load the selected IP address 
+into the browser.
+Configure
+This item is only available when one machine has been selected. Selecting this 
+option opens the Configure Machine window. This shows the Network settings 
+for each of the Ethernet Interfaces. Ethernet Interface one has a check box for 
+DHCP. If selected, this network interface will be given its setting by the DHCP 
+server. If the box is not checked, the user can enter in standard quad-dot notation 
+the IP address, the Netmask and the Gateway address. The second port does not 
+exist in the RTU.
+Strobe Ident 
+Lights
+This item is only available when one machine has been selected, and causes the 
+unit’s hardware Ident Lights to flash. 
+NOTE:
+Pressing the Ident Switch on the RMU controller hardware for 10 
+seconds will also cause the Ident Lights to flash and the selected unit 
+will also be highlighted in the MicroConf window.
+Restart
+This is not supported when using the RMU.
+Refresh Local 
+Machines (F5)
+This option is available with none, one or several machines selected. This action 
+forces the auto-discovery mechanism to do an immediate check for machines that 
+may be on the Local Area Network (LAN).
+Manage 
+Machine List
+This option is used to select which machines appear in the managed (upper) 
+pane. There are 4 sub-menus available, these are:.
+Add - This option is always available, and allows the user to type in an IP 
+address or a range of addresses. NOTE: The user can highlight one or more 
+machines in the discovered (lower) pane and drag them to the upper pane to add 
+them to the managed list.
+Remove - This option is only available with one or more of the managed 
+machines selected in the upper pane.
+Import - With the cursor in the managed (upper) pane, this option opens an 
+explorer style dialog and a nanolist file (.nnl suffix) can be selected. The selected 
+file will be parsed and the upper window will be populated accordingly.
+Export - This allows the user to export the list of managed machines in .nnl 
+format. One or more managed machines must be selected and this option then 
+exports the details of the selected machines to the .nnl list.
+Page 44 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1
+
+=== SWCFG PAGE 45 ===
+11 
+Firmware Version History
+The RMU has two devices that require firmware: the I/O Processor (in the Altera gate array on the 
+P513 Main I/O board) and the Microchip processor (on the P572 RTU2 CPU board).
+P513 Main I/O board
+Minimum version HW 2.03 SW 2.08 (released 5 December 2019) is needed to support Dual 
+Chronometry whilst master metering.
+P572 RTU2 CPU board
+3v0r4 
+Added DigOut01 as a redundant copy of DigOut06.
+3v1r0
+Added Brooks Prover mode - Run signal stays active on DigOut06 until return piston 
+command issued from proving computer.
+3v1r1 
+Added DigOut04 as a redundant copy DigOut06.
+3v2r0
+In PIU mode, a potential glitch on inverted digital inputs eliminated and website improved. 
+to show input inversion on diagnostic page.
+3v2r1
+Minor wording change on website.
+3v3r0
+Added DigIn8 to select A or B channel for proving.
+3v4r0
+Released the Ethernet to RS485 Modbus Relay feature & serial port configuration menu.
+3v5r0
+DHCP fallback modified to increase boot speed
+3v6r0
+Added support for encoder based proving
+3v7r0
+Added enhanced support for BiDi prover 4-way valve control in PIU mode. Ability to 
+update the RMU firmware and the I/O Processor gate-array utilizing MicroConf was added.
+NF_P572RMU_SCM/R4.1
+P572 RMU - Software & Configuration Manual
+Page 45 of 46
+
+=== SWCFG PAGE 46 ===
+12 
+RMU Field I/O Connection Information
+Page 46 of 46
+P572 RMU - Software & Configuration Manual
+NF_P572RMU_SCM/R4.1

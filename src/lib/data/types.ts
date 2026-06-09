@@ -39,6 +39,21 @@ export interface Customer {
   name: string;
 }
 
+// A person on the roster — technicians who run provings and witnesses who sign.
+// Roles are advisory (a person can be both); the picker filters by role but
+// never hides anyone.
+export type ContactRole = "technician" | "witness" | "customer_rep" | "other";
+
+export interface Contact {
+  id: string;
+  companyId: string;
+  name: string;
+  role?: ContactRole;
+  organization?: string;
+  email?: string;
+  phone?: string;
+}
+
 export interface Location {
   id: string;
   companyId: string;

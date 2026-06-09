@@ -1,0 +1,1688 @@
+=== PICO PAGE 1 ===
+Newflow
+Pico RMU
+Incorporating
+TorqueWrench
+User
+Manual
+
+=== PICO PAGE 2 ===
+Contact:
+Newflow Ltd
+George House
+Derwent Road
+Malton, North Yorkshire
+YO17 6YB, UK
+Tel:
++44 1653 310 000
+Email:
+sales@newflow.co.uk
+Document Information
+ 
+ 
+Document Name
+Pico RMU User Manual
+Document Identifier 
+PicoRMU-UM
+Page 2 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+NÅNO (with Angstrom symbol) and Visual C||Cure are registered trademarks of Newflow Ltd.
+All trademarks are acknowledged as the property of their respective owners.
+TESTit & PROVEit are trademarks of Quorum Business Solutions, Inc. (Flow-Cal, Inc).
+This document, submitted in confidence, contains proprietary information and shall not be reproduced or 
+transferred to others without prior written permission of Newflow Ltd.
+This document shall not form part of any contract. Specifications are subject to change without notice and 
+Newflow Ltd accepts no liability of any kind for errors or omissions.
+Full contractual terms are available on the website at www.newflow.co.uk/pdf/tandc.pdf
+
+=== PICO PAGE 3 ===
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 3 of 33
+
+=== PICO PAGE 4 ===
+Table of Contents
+1   Introduction.....................................................................................................................................5
+2   Pico RMU I/O...................................................................................................................................6
+2.1   Field I/O..................................................................................................................................................... 6
+2.2   Communications........................................................................................................................................7
+2.3   Input Power................................................................................................................................................ 7
+2.4   Digital Inputs.............................................................................................................................................. 7
+2.4.1   Digital Input Circuit Overview.........................................................................................................................................................7
+2.4.2   Digital Input Functional Representation.........................................................................................................................................7
+2.4.3   Digital Input Field Wiring Example..................................................................................................................................................8
+2.5   Digital Outputs........................................................................................................................................... 9
+2.5.1   Digital Output Circuit Overview.......................................................................................................................................................9
+2.5.2   Digital Output Functional Representation.......................................................................................................................................9
+2.5.3   Digital Output Field Wiring Example.............................................................................................................................................10
+2.6   Pulse Inputs............................................................................................................................................. 11
+2.7   4-20mA High Accuracy 24bit Analog Inputs.............................................................................................11
+2.7.1   Analog Input Block Diagram.........................................................................................................................................................12
+2.7.2   Analog Input Field Wiring.............................................................................................................................................................13
+3   Pico RMU in RTU Mode................................................................................................................14
+3.1   RTU Mode Connection Pinout Drawing...................................................................................................14
+4   Pico RMU in PIU Mode..................................................................................................................15
+4.1   PIU Mode Connection Pinout Drawing....................................................................................................15
+4.2   Digital Input Assignment..........................................................................................................................16
+4.3   Digital Output Assignment.......................................................................................................................17
+5   TorqueWrench..............................................................................................................................18
+5.1   PicoRMU Info Page Information..............................................................................................................19
+5.1.1   Pulse Inputs..................................................................................................................................................................................19
+5.1.2   Device Information........................................................................................................................................................................19
+5.1.3   Digital Inputs.................................................................................................................................................................................19
+5.1.4   Digital Outputs..............................................................................................................................................................................20
+5.1.5   Analog Inputs................................................................................................................................................................................20
+5.1.6   Pressure Correction......................................................................................................................................................................20
+5.2   PicoRMU Config Page Information..........................................................................................................21
+5.2.1   Digital Input Inversion...................................................................................................................................................................21
+5.2.2   Digital Output Inversion................................................................................................................................................................21
+5.2.3   RS422/485 Config........................................................................................................................................................................22
+5.2.4   Fwd/Rev Timeout (secs) – PIU Mode Only..................................................................................................................................22
+5.2.5   Modbus Slave Address.................................................................................................................................................................22
+5.2.6   Densitometer Pressure Compensation........................................................................................................................................22
+5.3   PicoRMU Info Page in PIU Mode.............................................................................................................23
+5.4   Wiring the Isolated RS422 Converter......................................................................................................24
+6   Modbus..........................................................................................................................................25
+6.1   Modbus Slave Map..................................................................................................................................25
+6.1.1  INT16 Addresses...........................................................................................................................................................................26
+6.1.2  INT32 Addresses...........................................................................................................................................................................27
+6.1.3  FLOAT32 Addresses.....................................................................................................................................................................28
+6.2   Newflow Modbus Master Simulator.........................................................................................................29
+7   Mechanical Dimensions...............................................................................................................30
+8   Specifications...............................................................................................................................31
+8.1   Mechanical...............................................................................................................................................31
+8.1.1   DIN Rail Mounted.........................................................................................................................................................................31
+8.1.2   Potted Unit....................................................................................................................................................................................31
+8.2   Environmental.......................................................................................................................................... 31
+8.3   Power Supply...........................................................................................................................................31
+8.4   Digital Status Inputs.................................................................................................................................32
+8.5   Digital Status Outputs..............................................................................................................................32
+8.6   Meter Pulse Inputs & Period Measurement.............................................................................................32
+8.7   Analog Inputs........................................................................................................................................... 32
+9  Revision History............................................................................................................................33
+Page 4 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 5 ===
+1 
+Introduction
+Operational Overview
+The Pico RMU is a small footprint Remote Measurement Unit optimized for flow measurement and 
+meter proving applications.
+Features
+The Pico RMU is designed to operate as an interface to the Quorum (previously Flow-Cal, Inc) TESTit 
+& PROVEit validation packages. The following features are included as part of the design of the unit:
+•
+Packaged in either a DIN Rail mounting enclosure, or as a fully potted version for tough 
+environmental locations.
+•
+All connections are made by pluggable heavy duty 5mm terminal blocks. These can accept 
+cable of 24AWG to 12AWG.
+•
+Operating temperature range is -40 °F to +185 °F.
+•
+Compatible TESTit & PROVEit RS232 serial interface. 
+•
+RS232 port is optically isolated from the internal ground, shared by the analog inputs, to ensure 
+there are no ground loops which could affect the integrity of operation.
+•
+RS422 port can also be used with TESTit & PROVEit if longer cable lengths are required.
+•
+Digital inputs, digital outputs and pulse inputs are all individually optically isolated.
+•
+The Pico RMU can also be used as a general purpose RTU device, communicating via Modbus 
+RTU protocol.
+•
+Modbus Master interface provided for connection to a densitometer or Coriolis meter. This 
+allows the Pico RMU to provide the line pressure to the densitometer or Coriolis meter so that it 
+can enhance accuracy by correcting the measured density for the effects that pressure has on the 
+tube stiffness. This runs on the RS-422/485 serial port.
+•
+A Poll Profile File for the Pico RMU is available for the Newflow Modbus Master Simulator. 
+This allows the Pico RMU to be verified in Modbus mode.
+•
+The free of charge TorqueWrench Windows program can also be used for diagnostic and 
+configuration purposes. 
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 5 of 33
+
+=== PICO PAGE 6 ===
+2 
+Pico RMU I/O
+2.1 
+Field I/O
+The Pico RMU has the following Field I/O available:
+ Field I/O Type
+Number of 
+Channels
+Pins 
+Used
+Isolated
+ Use or Comment
+Meter Pulse Inputs
+see 2.6
+ 
+  -   Pulse Inputs
+ 
+ 
+3
+6
+Yes
+All inputs have high 
+resolution period 
+measurement and are also 
+suitable for use with a 
+Densitometer
+Digital I/P
+see 2.4
+ 
+ .-   Digital Inputs
+ 
+ 
+7
+14
+Yes
+Digital Input 7 is also used 
+as the Detector/Sphere-
+Switch input
+Digital O/P
+see 2.5
+ 
+  -   Digital Outputs
+ 
+ 
+5
+10
+Yes
+General Purpose, protected 
+Outputs with low saturation, 
+can drive TTL
+Analog Inputs
+see 2.7
+ 
+  -   4-20mA High 
+ 
+ 
+Accuracy 24bit Analog Inputs
+8
+8+3
+No
+The eight inputs are 
+configured for 4-20mA, 
+sharing a common ground
+RS232
+1
+3
+Yes
+PROVEit/TESTit Interface 
+or Modbus RTU
+RS422 or RS485
+1
+5
+No
+Modbus RTU slave 
+Interface or Modbus Master 
+Interface
+To avoid ground loops whilst using the RS422 port, the use of an isolated RS422 converter is 
+recommended, see 5.4
+   -   Wiring the Isolated RS422 Converter
+ 
+ .
+Page 6 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 7 ===
+2.2 
+Communications
+The Pico RMU is equipped with two serial communications ports. One port is an optically isolated 
+RS232 port intended for direct connection to the Quorum (previously Flow-Cal, Inc) PROVEit and 
+TESTit proving supervisory programs. If the Pico RMU is not being used with PROVEit, the port is a 
+slave Modbus RTU link.
+The second port is an RS422 port. With full control provided on the enable signals for both the transmit 
+and receive, the port can also be used in RS485 mode, by connecting the RX+ & TX+ together to 
+produce the RS485 A signal and connect the RX- & TX- together to produce the RS485 B signal.
+The RS232 port is fixed as 9600, 8 data bits, 1 stop bit, No Parity
+The RS422 port is defaults to 57600, 8 data bits, 1 stop bit, No Parity
+2.3 
+Input Power
+The Pico RMU will operate with a supply voltage in the range of 10V to 30V. It consumes around 
+0.25W, and runs very cool to maximize lifetime and reliability.
+2.4 
+Digital Inputs
+There are seven identical high impedance optically isolated Digital Input channels. Each channel has 
+both surge and reverse voltage protection, the input circuit is shown below. Following recovery of the 
+signal from the opto-isolator, the signal is fed into the Processor (CPU) where it is digitally processed.
+2.4.1 
+Digital Input Circuit Overview
+2.4.2 
+Digital Input Functional Representation
+From an operation perspective, each digital input can be considered as a light bulb with a series diode. 
+The voltage must be applied in the right polarity but, because they are all individually isolated, the 
+installer has the freedom to connect them in a number of ways. 
+A digital input is active when a voltage of the 
+correct polarity is connected between the two input 
+connections and the "light bulb" is illuminated
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 7 of 33
+− VE
++ VE
+To CPU
+
+=== PICO PAGE 8 ===
+2.4.3 
+Digital Input Field Wiring Example
+Page 8 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+DigIn 1
++
+−
+DigIn 2
++
+DigIn 3
++
+DigIn 4
++
+DigIn 5
++
+DigIn 6
++
+DigIn 7
++
+Independently 
+Powered Output
++24V Supply
+Push Button
+Relay Contact
+Grounded Push Button
+Grounded Relay Contact
+Open Collector
+Grounded  
+Sphere Switches
+24V Return
+PICO RMU  
++
+-
+−
+−
+−
+−
+−
+−
+To CPU
+To CPU
+To CPU
+To CPU
+To CPU
+To CPU
+To CPU
+
+=== PICO PAGE 9 ===
+2.5 
+Digital Outputs
+There are five Digital Outputs provided. Each output channel has a high current output which is surge 
+and reverse connection protected. Each output is optically isolated from all other I/O points. This 
+allows it to be connected to either the positive rail to act as a current source or connected to the 
+negative rail to mimic a grounded open collector output.
+Each output also has a highly robust protection circuit that disconnects the load in case of an accidental 
+overload.
+2.5.1 
+Digital Output Circuit Overview
+2.5.2 
+Digital Output Functional Representation
+Each digital output can be considered as the contacts of a relay with a reverse clamp diode.
+When the digital output is OPEN, no current will flow from the +ve to the -ve terminals (as long as the 
+correct polarity is observed). When the contacts are CLOSED, current will flow.
+NOTE:
+The protection device on the Digital Outputs will make current flow if the polarity is 
+reversed regardless of whether the Pico RMU is powered on or turned off.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 9 of 33
+− VE
++ VE
+Digital 
+Output
++ve
+-ve
+From the
+Digital
+Processor
+Output
+
+=== PICO PAGE 10 ===
+2.5.3 
+Digital Output Field Wiring Example
+Page 10 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+Pico-RMU  
+DigOut 1
+DigOut 4
+DigOut 3
+DigOut 2
+DigOut 5
+24V Return
++24V Supply
+Annunciator
+Relay With 
+Back-EMF Diode
+Indicator
+−
++
+Dig In Opto-coupler
+Relay With 
+Back-EMF Diode
+−
++
+−
++
+−
++
+−
++
+From 
+CPU
+From 
+CPU
+From 
+CPU
+From 
+CPU
+From 
+CPU
++
+−
+−
++
+
+=== PICO PAGE 11 ===
+2.6 
+Pulse Inputs
+There are three Pulse Input channels. Each is individually opto-isolated and has transient protection and 
+filtering. They are suitable for meter pulses or frequency mode Densitometers, as all inputs have high 
+resolution period measurement suitable for use with Densitometers.
+2.7 
+4-20mA High Accuracy 24bit Analog Inputs
+The Analog section provides eight identical, high accuracy Analog Input measurement circuits, sharing 
+a common ground. They are all 4-20 mA measurement channels.
+24bit sigma-delta Analog to Digital Converter (ADC) technology is used together with a precision 
+reference.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 11 of 33
+− VE
++ VE
+To 
+CPU
+High 
+Speed 
+Signal 
+Recovery 
+Circuit
+
+=== PICO PAGE 12 ===
+2.7.1 
+Analog Input Block Diagram
+Page 12 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+120R
+120R
+120R
+120R
+120R
+120R
+120R
+120R
+Ch1
+Ch2
+Ch3
+Ch4
+Ch5
+Ch6
+Ch7
+Ch8
+Analog Ground
+8 Channel
+Analog In 1+
+Analog In 2+
+Analog In 3+
+Analog In 4+
+Analog In 5+
+Analog In 6+
+Analog In 7+
+Analog In 8+
+3 x Analog
+Data
+Grounds
+Reference
+To
+CPU
+24 Bit ADC
+
+=== PICO PAGE 13 ===
+2.7.2 
+Analog Input Field Wiring
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 13 of 33
+Tu
+120 R
++
+120 R
++
+120 R
++
+120 R
++
+120 R
++
+AnIn 1-8
+120 R
++
+120 R
++
+CH1
+CH2
+CH3
+CH4
+CH5
+CH6
+CH7
+CH8
+GND
+GND
+GND
+Td
+Pu
+Pd
+D
+120 R
++
++24V SUPPLY
+24V RETURN
+
+=== PICO PAGE 14 ===
+3 
+Pico RMU in RTU Mode
+3.1 
+RTU Mode Connection Pinout Drawing
+Page 14 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
++   +   +   +   +   +   +   +
+1   2    3    4   5    6   7
+Digital Inputs
+1   2      3    4   5
+Digital Outputs
+A   B
+C
+Pulse 
+Inputs
+Status
+Comms
+8 7 6 5 4 3 2 1
+Analog 
+Inputs
+Analog 
+Ground
+DC Power In
+GND
+GND
+RX
+TX
+RS232
+TX-
+RX-
+RX+
+TX+
+SCN
+RS422
+Power
+
+=== PICO PAGE 15 ===
+4 
+Pico RMU in PIU Mode
+When the Pico RMU detects PIU formatted commands are being received, rather than Modbus polls, it 
+automatically switches into PIU operational mode.
+4.1 
+PIU Mode Connection Pinout Drawing
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 15 of 33
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
+‒   +
++   +   +   +   +   +   +   +
+1   2    3    4   5    6   7
+Digital Inputs
+1   2      3    4   5
+Digital Outputs
+A   B
+C
+Pulse 
+Inputs
+Status
+Comms
+8 7 6 5 4 3 2 1
+Analog 
+Inputs
+Analog 
+Ground
+DC Power In
+GND
+GND
+RX
+TX
+RS232
+TX-
+RX-
+RX+
+TX+
+SCN
+RS422
+Power
+Return Piston
+Latched Launch
+Forward Command
+Reverse Command
+Launch Pulse
+PIU MODE Digital Inputs & Outputs
+
+=== PICO PAGE 16 ===
+In PIU mode, the functions of the Digital Inputs and Digital Outputs are pre-selected as shown on the 
+previous page. The selection of the Pulse Input channel and the Analog Input channels can be chosen 
+within PROVEit.
+The connection to the PC running the prover software package usually utilizes the RS232 link, and the 
+baud rate and other serial communications settings are fixed. For installations that need longer cables or 
+better noise immunity, the RS422 port can be used for the PIU communications as long as it is 
+configured to 9600 baud to match the setting of PROVEit.
+The spare serial communications port can be used for two purposes:
+1. It can be used with TorqueWrench to check or diagnose any problems with the field 
+connections as it gives a clear indication of the current status of all of the inputs and outputs.
+2. It can also be used to configure the Pico RMU options, such as inverting any or all of the 
+Digital Inputs & Digital Outputs, selecting a Forward and Reverse command timeout for the 4-
+way valve in Bi-Directional prover mode or configuring the Densitometer pressure correction.
+4.2 
+Digital Input Assignment
+In PIU mode, the use of the Digital Inputs has been allocated as shown in the table below.
+Digital
+Inputs
+Description
+PROVEit Function
+DIGIN1
+Forward Reset
+This input resets the alternating Forward Command and Reverse 
+Command outputs for the 4-way valve control, to the forward 
+direction.
+This information is not transmitted to PROVEit.
+DIGIN2
+Forward Endstop
+If the BiDi Prover 4-way valve has a switch to indicate the valve 
+has completed its forward travel, it can be connected here.
+DIGIN3
+Reverse Endstop
+If the BiDi Prover 4-way valve has a switch to indicate the valve 
+has completed its reverse travel, it can be connected here.
+DIGIN4
+Fault Detect
+The state of this input is transmitted directly to PROVEit.
+DIGIN5
+Leak Detect
+The state of this input is transmitted directly to PROVEit.
+DIGIN6
+Prover Ready
+The state of this input is transmitted directly to PROVEit.
+DIGIN7
+Detector Switch
+Detector Switch also known as Volume Pulse
+The detector switch input is used to trigger the various internal 
+counters and drives the prover sequence along.
+Page 16 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 17 ===
+4.3 
+Digital Output Assignment
+In PIU mode, the use of the Digital Outputs has been allocated as shown in the table below.
+Digital
+Outputs
+Description
+PROVEit Function
+DIGOUT1
+Launch Pulse
+Launch (500ms duration pulse).
+This output is triggered directly by PROVEit.
+This output is used with mechanically driven Small Volume 
+Provers.
+DIGOUT2
+Forward 
+Command
+The Forward Command and Reverse Command outputs are 
+triggered alternatively by the PROVEit Launch request. These 
+are intended for use with bi-directional provers. The Forward or 
+Reverse Command signals stay active until either the associated 
+Endstop input signal is detected or the Prover FWD/REV 
+Timeout is exceeded.
+DIGOUT3
+Reverse
+Command
+Reverse Command for bi-directional provers.
+ See Forward Command above.
+DIGOUT4
+Latched Launch
+This output is used with hydraulically driven Small Volume 
+Provers. The Latched Launch output will stay active until the 
+second detector has been triggered.
+DIGOUT5
+Return Piston
+Return Piston (500ms duration).
+This output is triggered directly by PROVEit.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 17 of 33
+
+=== PICO PAGE 18 ===
+5 
+TorqueWrench
+The TorqueWrench Windows program can be used to check the installation and that appropriate values 
+are being seen. In addition, the Config tab allows the digital inputs and digital outputs to be inverted. 
+These settings are stored in non-volatile memory, so will be remembered after a power cycle.
+The TorqueWrench program is a single executable program and does not require an installer as it 
+requires no other files to operate.
+The file can be placed in any folder or directory, including the desktop, a USB memory stick or a 
+network drive. When the program is first launched, it will create a TorqueWrench.ini file in the same 
+directory as the executable is run from. This file stores information such as the serial port settings.
+TorqueWrench communicates with the Pico RMU by means of Modbus RTU only.
+The screenshot directly below shows the screen after launching the application. The initial view 
+displays the Pico RMU Information page (PicoRMU Info) .
+Page 18 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 19 ===
+5.1 
+PicoRMU Info Page Information
+The following describes in more detail the information shown on the PicoRMU Info screen on the 
+previous page.
+5.1.1 
+Pulse Inputs
+The top left of the screen shows the frequency to 6 significant digits for the three pulse input channels. 
+It also displays the Pulse Count of each channel since the Pico RMU was powered on.
+5.1.2 
+Device Information
+The top right of the screen has six information fields. These are:
+1. S/No
+The Pico RMU unique Serial Number
+2. Version [CRC]
+This is the firmware version with the checksum in square brackets
+3. Tick ms
+This is the Pico RMU up-time in milliseconds
+4. Pkt Count
+This shows the number of Modbus messages decoded by TorqueWrench
+5. Update Count
+This indicate the number of updates to all eight Analog Inputs
+6. RMU Temperature
+This is the internal temperature of the ADC voltage reference
+5.1.3 
+Digital Inputs
+The center left of the screen shows a mimic of the status for each of the Digital Inputs, Ch1 to Ch7.
+These seven fields display two pieces of information for each digital input.
+The first word (OFF or ON) shows the electrical levels going into the digital input circuit, and indicates 
+if the "light bulb" is turned on or off.
+A digital input is OFF unless a voltage of the correct 
+polarity is connected between the two input 
+connections. Then the "light bulb" would be 
+illuminated and the input would report ON.
+The second word (LO or HI) shows the input logic state following the Digital Input Invert function for 
+each channel described in section 5.2.1
+ 
+  -   Digital Input Inversion
+ 
+ .
+Input Level
+No Inversion
+Inversion Selected
+Input Off:
+less than 1.5V 
+across the terminals
+OFF-LO
+OFF-HI
+Input On:
+more than 5V 
+across the terminals
+ON-HI
+ON-LO
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 19 of 33
+
+=== PICO PAGE 20 ===
+5.1.4 
+Digital Outputs
+The middle of the screen shows a mimic of the status for each of the Digital Outputs, Ch1 to Ch5.
+These five fields show the commanded value sent to the Digital Output Circuitry. The actual output 
+may be opposite the software value, if the Digital Output Invert function has been enabled for that 
+channel.
+When the digital output is OPEN no current will 
+flow from the +ve to the -ve terminals. When the 
+contacts are CLOSED, current will flow as long as 
+the correct polarity is observed.
+NOTE:
+The protection device on the Digital Outputs will 
+make current flow if the polarity is reversed 
+regardless of whether the Pico RMU is powered on 
+or turned off
+5.1.5 
+Analog Inputs
+The center right of the screen shows the Analog Input current, measured in milli-amps (mA) for each of 
+the eight channels Ch1-Ch8, shown to 4 decimal places.
+5.1.6 
+Pressure Correction
+The bottom right of the screen has a single data field titled Pressure Correction.
+The figure displayed is calculated by applying the scaling values (the pressure @ 4 mA and 20 mA) to 
+the analog reading of the selected channel, as shown in the PicoRMU Config screen described in 5.2.6
+ 
+  -  
+Densitometer Pressure Compensation.
+This calculated value can be transmitted to a Densitometer or Coriolis meter so the meter can correct its 
+density measurement due to the effects of pressure on the measuring tube stiffness.
+Page 20 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+− VE
++ VE
+Digital 
+Output
+
+=== PICO PAGE 21 ===
+5.2 
+PicoRMU Config Page Information
+Clicking on the PicoRMU Config tab will shown the configuration features available.
+5.2.1 
+Digital Input Inversion
+In the PicoRMU Config screenshot, on the top left hand side, the tick indicates that the corresponding 
+input is inverted. In the example, Digital Input 6 (DigIn6) and Digital Input 7 (DigIn7) are inverted, but 
+the others are not.
+5.2.2 
+Digital Output Inversion
+In the PicoRMU Config screenshot, in the top center, a tick indicates that the corresponding output is 
+inverted. In the example, Digital Output 2 (DigOut2) & Digital Output 3 (DigOut3) are inverted, but 
+the others are not.
+NOTE:
+Inverted Digital Outputs will be off when the Pico RMU is powered off and remain off 
+when the Pico RMU is powered on. They will only change state when commanded by 
+the Modbus or PIU communications.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 21 of 33
+
+=== PICO PAGE 22 ===
+5.2.3 
+RS422/485 Config
+In the PicoRMU Config screenshot, on the top right hand side, the baud rate can be changed.
+NOTE:
+TorqueWrench will automatically adjust to any baud rate changes, but there may be a 
+delay of several seconds to restore communications.
+5.2.4 
+Fwd/Rev Timeout (secs) – PIU Mode Only
+In the PicoRMU Config screenshot, on the bottom left hand side, this timeout will disable the Forward 
+(or Reverse) Command Digital Output after the timeout number of seconds, even if the Forward (or 
+Reverse) EndStop Digital Input has NOT been seen.
+It can be used to ensure the 4-way diverter valve motor is not driven continuously if an EndStop switch 
+fails. In the absence of an EndStop input, it can be used to generate a pulsed output.
+5.2.5 
+Modbus Slave Address
+In the PicoRMU Config screenshot, in the bottom center, this allows the Modbus Slave Address to be 
+set to the required value for the link. This can be set in the range of 1 to 254.
+5.2.6 
+Densitometer Pressure Compensation
+In the PicoRMU Config screenshot, on the bottom right hand side, these settings allow the pressure to 
+be transmitted to the Densitometer or Coriolis meter so the meter can correct its density measurement 
+due to the effects of pressure on the measuring tube stiffness.
+Function Name
+Description
+Source Channel
+Select the Analog Input channel that has the appropriate pressure.
+Slave Address
+This is the Modbus address of the Density Meter or Coriolis meter.
+Register
+This is the Modbus register. It is defaulted to 451, but can be changed.
+Pressure @4mA
+Set this to the pressure in the required units when the input to the Source 
+Channel would be 4mA, 0% of scale.
+Pressure @20mA
+Set this to the pressure in the required units when the input to the Source 
+Channel would be 20mA, 100% of scale.
+Page 22 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 23 ===
+5.3 
+PicoRMU Info Page in PIU Mode
+If serial data is received using the PIU protocol, TorqueWrench will add the labels for both the Digital 
+Inputs and Digital Outputs, as shown in the screenshot above. 
+NOTE: 
+The Analog Inputs are not labeled, since the channel assignment for Temperatures and 
+Pressures etc is performed by PROVEit.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 23 of 33
+
+=== PICO PAGE 24 ===
+5.4 
+Wiring the Isolated RS422 Converter
+For best analog performance when using the non-isolated RS422 port, the use of an isolated RS422 
+converter is recommended. See the hookup diagram below, using the DSD Tech SH-U11F USB to 
+Serial Converter.
+Page 24 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++  ‒
++   +   +   +   +   +   +   +
+1   2    3    4   5    6   7
+Digital Inputs
+5
+Digital Outputs
+A   B
+C
+Pulse
+Status
+Comms
+8 7 6 5 4 3 2 1
+Analog
+Analog
+DC Power In
+GND
+GND
+RX
+TX
+RS232
+TX-
+RX-
+RX+
+TX+
+SCN
+RS422
+Power
+N/C
+(Isolated) GND
+RXD −
+TXD+
+TXD −
+RXD+
+Inputs
+Inputs
+4
+3
+2
+1
+‒
++
+‒
+‒
+‒
+‒
+‒
++
++
++
++
++
+‒
+‒
++
++
+Ground
+
+=== PICO PAGE 25 ===
+6 
+Modbus
+6.1 
+Modbus Slave Map
+The Pico RMU supports 3 different data formats;
+•
+16 bit Integer format (uint16, byte order 10)
+•
+32 bit Integer format (uint32, byte order 3210)
+•
+32 bit Float format (float32, IEEE-754, byte order 3210).
+The data in 32bit Integer format is scaled to give sufficient resolution and allows the data to be 
+"human" readable.
+As it is a fully contiguous map, it allows all the data to be collected in a single poll.
+Heading
+Description
+ATT
+•
+Read Only (RO)
+•
+Read and Write (RW)
+•
+Read and Write – Protected (RWP)
+The RWP attribute means that the location is protected. The correct 
+code for the address must be written to the Modbus Write Lock 
+(Address 1000) immediately beforehand.
+NV?
+Indicates if the RW value is stored in Non-Volatile memory, so will be 
+remembered following a power cycle.
+A "YES" indicates that the value is stored.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 25 of 33
+
+=== PICO PAGE 26 ===
+6.1.1 INT16 Addresses
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+&/Or Unit
+1000
+Int16
+Modbus Write Lock – Note #1
+RW
+No
+0 to 65,535
+N/A
+1001
+Int16
+Analog Poll Count – Note #2
+RO
+No
+0 to 65,535
+Not Scaled
+1002
+Int16
+Digital Input Values (Bits: 0-6)
+RO
+No
+0 to 127
+Binary
+1003
+Int16
+Digital Outputs (Bits: 0-4)
+RW
+No
+0 to 31
+Binary
+1004
+Int16
+Invert Digital lnputs – Note #3
+RWP
+Yes
+0 to 127
+Binary
+1005
+Int16
+Invert Digital Outputs 
+RWP
+Yes
+0 to 31
+Binary
+1006
+Int16
+Fwd/Rev Timeout – Note #4
+RWP
+Yes
+0 to 65,534
+ millisec x 10
+1006
+Int16
+MAC Address (Bits 0-15)
+RO
+No
+0 to 65535
+Binary
+1008
+Int16
+MAC Address (Bits 16-31)
+RO
+No
+0 to 65535
+Binary
+1009
+Int16
+MAC Address (Bits 32-47)
+RO
+No
+0 to 65535
+Binary
+1010
+Int16
+Firmware Version
+RO
+No
+0.00.00 to 6.55.35
+BinaryModbus 
+Master Simulator
+1011
+Int16
+Firmware CRC
+RO
+No
+0 to 65535
+Binary
+1012
+Int16
+Slave Address
+RWP
+Yes
+1 to 254
+Binary
+1013
+Int16
+Special Function Codes
+RW
+No
+Reserved
+Reserved
+1014
+Int16
+Densitometer Pressure Channel
+RWP
+Yes
+1 to 8 (0=Disabled)
+Binary
+1015
+Int16
+Densitometer Slave Address
+RWP
+Yes
+1 to 254
+Binary
+1016
+Int16
+Densitometer Pressure Register
+RWP
+Yes
+0 to 65535
+Binary
+1017
+Int16
+RS422 Baud Rate – Note #5
+RWP
+Yes
+1 to 7
+Binary
+1018
+Int16
+SS Debounce Period
+RWP
+Yes
+0 to 65534
+Milliseconds
+Note 1
+The Modbus write lock location 1000 must be written to immediately before writing to 
+any of the protected locations, with the appropriate security code. Contact your local 
+distributor for the security codes. All locations can be written to using TorqueWrench
+Note 2
+The analog poll count value is updated immediately after the new analog values are 
+published.
+Note 3
+Bit 0 of the Digital Input Value (in both Int16 and Int32) represents Digital Input 1, bit 1 
+represents Digital Input 2 and so on. If you want to invert say Digital Input 2, then write 
+0100000 00000000 to the Invert Digital Input register immediately after writing the 
+correct security code to the write lock location, or use TorqueWrench.
+Note 4
+This is only valid when using PROVEit. In RTU mode it has no function.
+Note 5
+RS422/485 Baud rate selection can be any of the following values:
+1 = 2400 baud
+2 = 4800 baud
+3 = 9600 baud
+4 = 19200 baud
+5 = 38400 baud
+6 = 57600 baud (factory default)
+7 = 115200 baud
+Page 26 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 27 ===
+6.1.2 INT32 Addresses
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+&/Or Unit
+1100
+Int32
+Version Number x.xx.xx
+RO
+No
+ 0 to 65535
+Not Scaled
+1102
+Int32
+Comms Packet Count
+RO
+No
+-
+1104
+Int32
+RTU/PIU Mode
+RO
+No
+ 1=RTU 2=PIU
+Not Scaled
+1106
+Int32
+Uptime Count in milliseconds
+RO
+No
+0 to 4,294,967,295 
+MIlliseconds
+1108
+Int32
+Analog Poll Count
+RO
+No
+0 to 4,294,967,295 
+Not Scaled
+1110
+Int32
+Frequency Ch A
+RO
+No
+Hz x 100,000
+1112
+Int32
+Frequency Ch B
+RO
+No
+Hz x 100,000
+1114
+Int32
+Frequency Ch C
+RO
+No
+Hz x 100,000
+1116
+Int32
+Period C (ns)
+RO
+No
+ms x 1,000,000
+1118
+Int32
+Channel A Counts
+RO
+No
+0 to 4,294,967,295
+Binary
+1120
+Int32
+Channel B Counts
+RO
+No
+0 to 4,294,967,295
+Binary
+1122
+Int32
+Channel C Counts
+RO
+No
+0 to 4,294,967,295
+Binary
+1124
+Int32
+Analog Input Ch 1
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1126
+Int32
+Analog Input Ch 2
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1128
+Int32
+Analog Input Ch 3
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1130
+Int32
+Analog Input Ch 4
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1132
+Int32
+Analog Input Ch 5
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1134
+Int32
+Analog Input Ch 6
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1136
+Int32
+Analog Input Ch 7
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1138
+Int32
+Analog Input Ch 8
+RO
+No
+0 to 25,000,000
+mA x 1,000,000
+1140
+Int32
+Approximate Board Temperature
+RO
+No
+°Celcius x100
+1142
+Int32
+Digital Input Values (Bits: 0-6)
+RO
+No
+0 to 127
+Binary
+1144
+Int32
+Digital Outputs (Bits: 0-4)
+RW
+No
+0 to 31
+Binary
+1146
+Int32
+Invert Digital lnputs – Note #3
+RWP
+Yes
+0 to 127
+Binary
+1148
+Int32
+Invert Digital Outputs
+RWP
+Yes
+0 to 31
+Binary
+Note 3
+Bit 0 of the Digital Input Value (in both Int16 and Int32) represents Digital Input 1, bit 1 
+represents Digital Input 2 and so on. If you want to invert say Digital Input 2, then write 
+0100000 00000000 to the Invert Digital Input register immediately after writing the 
+correct security code to the write lock location, or use TorqueWrench.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 27 of 33
+
+=== PICO PAGE 28 ===
+6.1.3 FLOAT32 Addresses
+Modbus
+Address
+Type
+Description
+ATT. NV? Range
+Pre-Scaler
+&/Or Unit
+1200
+Float32 Frequency Ch A
+RO
+No
+Hz
+1202
+Float32 Frequency Ch B
+RO
+No
+Hz
+1204
+Float32 Frequency Ch C
+RO
+No
+Hz
+1206
+Float32 Period C µs
+RO
+No
+Micro-seconds
+1208
+Float32 Analog Input Ch 1
+RO
+No
+Milli-amps
+1210
+Float32 Analog Input Ch 2
+RO
+No
+Milli-amps
+1212
+Float32 Analog Input Ch 3
+RO
+No
+Milli-amps
+1214
+Float32 Analog Input Ch 4
+RO
+No
+Milli-amps
+1216
+Float32 Analog Input Ch 5
+RO
+No
+Milli-amps
+1218
+Float32 Analog Input Ch 6
+RO
+No
+Milli-amps
+1220
+Float32 Analog Input Ch 7
+RO
+No
+Milli-amps
+1222
+Float32 Analog Input Ch 8
+RO
+No
+Milli-amps
+1224
+Float32 Approximate Board Temperature
+RO
+No
+°Celcius
+1226
+Float32 Factory use only
+RO
+No
+N/A
+1228
+Float32 Factory use only
+RO
+No
+N/A
+1230
+Float32 Densitometer Pressure @4mA
+RWP
+Yes
+User Defined
+1232
+Float32 Densitometer Pressure @20mA
+RWP
+Yes
+User Defined
+1234
+Float32 Pressure Correction Output
+RO
+No
+User Defined
+Page 28 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 29 ===
+6.2 
+Newflow Modbus Master Simulator
+There is a configuration file available for the Newflow Modbus Master Simulator. The file is named 
+the PicoRMU_Modbus_Poll_File.xml, and it has three polls defined. 
+•
+Poll 1 is for the uint16 registers 1000 to 1018 
+•
+Poll 2 is for the uint32 registers 1100 to 1148
+•
+Poll 3 is for the float32 registers 1200 to 1234
+•
+Poll 4 is the write unlock of protected addresses (RWP), register 1000
+The screenshot below shows the 16 bit Integer format (uint16, byte order 10) poll response.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 29 of 33
+
+=== PICO PAGE 30 ===
+7 
+Mechanical Dimensions
+The Pico RMU is available in two mechanical mounting arrangements, DIN Rail mounting or potted 
+assembly with 4 screw locations.
+For mounting the potted version see the drawing shown below. An optional DIN Rail mounting kit is 
+available for the potted version of the Pico RMU.
+Page 30 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 31 ===
+8 
+Specifications
+8.1 
+Mechanical
+8.1.1 
+DIN Rail Mounted
+Length on Rail
+4 Inches, (102mm)
+Height, including connectors*
+2 ½ Inches (64mm)
+Width across Rail
+5 ¼ Inches (132mm)
+Weight
+220 grams, including the plug-able connectors
+Structure
+PVC extrusion
+Mounting
+35 mm symmetrical Top Hat rail to EN50022 and
+asymmetric G-type rail to EN50035
+8.1.2 
+Potted Unit
+Overall length & width
+Approximately 4 7/8  Inches square, (102mm)
+Height, including connectors*
+1 1/4 Inches (32mm)
+Hole Centers
+Refer to drawing in 7   -   Mechanical Dimensions
+ 
+ 
+Weight
+11 ½ oz (325) grams, including the plug-able connectors
+Structure
+Epoxy potted with metal reinforced mountings
+Mounting
+#8 gauge screw or a 4 mm screw
+Supplied with 4 off M4 x 25mm steel screws & lock nuts
+8.2 
+Environmental
+Temperature
+-40 °F +185 °F operating and storage
+Humidity
+Up to 95% non-condensing
+8.3 
+Power Supply
+Input Voltage & Current
+10 V to 30 V D.C. 250 mW typical
+Suitable for 12 V Solar powered systems
+Maximum Input Ripple
+2 V peak to peak at 60 Hz
+Input protection
+200 mA Resettable Input Fuse
+* Additional height must be allowed for the cables that emerge vertically from the Pico RMU.
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 31 of 33
+
+=== PICO PAGE 32 ===
+8.4 
+Digital Status Inputs
+Configuration
+Individually opto-isolated inputs
+Maximum Input Voltage 
+30 V
+Minimum Input on Voltage
+5 V
+Maximum Input off Voltage
+1.5 V
+Input Impedance
+15 K Ohm typical
+Protection
+Surge and reverse voltage protection 
+8.5 
+Digital Status Outputs
+Configuration
+Individually Galvanically isolated
+Max Output Current 
+200 mA
+Max Output Saturation Voltage
+0.5 V @ 200 mA (0.25 V @ 100 mA)
+Max Output Standoff Voltage
+32V, limited by input protection
+Power Off State
+All digital outputs Open (Off)
+Initial Power on State
+All digital outputs Open (Off)
+Reverse Protection
+Note, current will flow if reverse connected
+8.6 
+Meter Pulse Inputs & Period Measurement
+Input Type
+Channels A, B & C suitable for meter pulses or densitometer
+Configuration
+Opto-coupled inputs
+Input signal levels 
+4 V to 24 V
+Input current minimum
+1.5 mA
+Input Impedance
+3 K Ohm
+Frequency range
+DC to 15 KHz
+Accuracy of Master Clock
+2.5 ppm
+Period resolution
+1.6 nSec @ 1KHz
+8.7 
+Analog Inputs
+Type of Inputs
+4-20 mA nominal input type
+Conversion Method
+24 bit Sigma-Delta ADC
+Effective resolution
+More than 18 bits, auto zero, auto calibrate
+Conversion time
+100 mSec per channel
+Series mode rejection
+Notch filter at 50 Hz and 60 Hz
+Page 32 of 33
+Pico RMU User Manual
+PicoRMU-UM-R5
+
+=== PICO PAGE 33 ===
+9 Revision History
+Rev
+Date
+Changes
+Prepared
+Checked
+Authorized
+0
+1 Jun 2022
+Initial Version
+MOB
+DGS
+MOB
+1
+1 Jul 2022
+Added Isolated RS422 wiring
+MOB
+DGS
+MOB
+2
+4 Aug 2022
+Added additional loop drawings and Modbus map
+MOB
+GPL
+MOB
+3
+3 Oct 2022
+Added Potted unit information ARN352
+MOB
+DGS
+MOB
+4
+5 May 2023
+Added Pressure Correction for Density meters
+Firmware Version: 1v00r07
+MOB
+DGS
+MOB
+5
+22 Mar 2024
+Updated Modbus Map to match new firmware
+Firmware Version: 1v03r00 [7789]
+GPL
+MOB
+MOB
+End of Document
+PicoRMU-UM-R5
+Pico RMU User Manual
+Page 33 of 33

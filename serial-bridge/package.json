@@ -1,0 +1,22 @@
+{
+  "name": "energycal-serial-bridge",
+  "version": "1.0.0",
+  "description": "WebSocket bridge — reads COM port via Windows API, streams bytes to browser",
+  "main": "bridge.js",
+  "scripts": {
+    "start": "node bridge.js",
+    "list": "node list-ports.js",
+    "modbus": "node modbus.js",
+    "modbus:selftest": "node modbus.js selftest",
+    "bridge": "node bridge.js",
+    "capture": "node sweep.js capture",
+    "sweep:signals": "node sweep.js signals",
+    "sweep:baud": "node sweep.js baud",
+    "sweep:parity": "node sweep.js parity",
+    "sweep:all": "node sweep.js all"
+  },
+  "dependencies": {
+    "serialport": "^12.0.0",
+    "ws": "^8.18.0"
+  }
+}

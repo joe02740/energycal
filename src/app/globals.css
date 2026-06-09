@@ -128,3 +128,33 @@
     @apply font-sans;
   }
 }
+
+/* Print: show only the certificate sheet, full page, ink-on-white.
+   The editor + app chrome are display:none'd (via .no-print / print:hidden) so
+   they don't reserve page height — that reserved height was causing a blank 2nd
+   page. The cert flows statically as the only content. @page margin is 0 and the
+   sheet supplies its own padding, so there's no browser-header gutter. */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .cert-print-root {
+    position: static !important;
+    inset: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    padding: 0 !important;
+  }
+  .cert-print-root .cert-wrap {
+    max-width: none !important;
+    box-shadow: none !important;
+  }
+  .cert-sheet {
+    max-width: none !important;
+    box-shadow: none !important;
+  }
+  @page {
+    size: letter;
+    margin: 0;
+  }
+}
