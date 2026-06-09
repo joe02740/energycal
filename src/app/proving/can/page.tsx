@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, Printer, X, FileCheck2 } from "lucide-react";
+import { Plus, Trash2, Printer, X, FileCheck2, FilePlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -15,7 +15,17 @@ import type { Contact, Customer, Location, Prover } from "@/lib/data/types";
 import { canRun, canRepeatability, type CanRunResult } from "@/lib/calc/can/canProving";
 import { CuInGalCalculator } from "./_components/CuInGalCalculator";
 import { CanCert } from "./_components/CanCert";
-import { emptyHeader, emptyRow, parseDecimal, type CanHeader, type CanRunRow } from "./types";
+import {
+  emptyHeader,
+  emptyRow,
+  parseDecimal,
+  loadSavedProvings,
+  persistSavedProvings,
+  newProvingId,
+  type CanHeader,
+  type CanRunRow,
+  type SavedCanProving,
+} from "./types";
 
 const STORAGE_KEY = "can-proving-draft-v1";
 const num = (s: string): number | "" => {
@@ -31,6 +41,11 @@ export default function CanProvingPage() {
   const [rows, setRows] = useState<CanRunRow[]>([emptyRow(), emptyRow()]);
   const [showCert, setShowCert] = useState(false);
   const [loaded, setLoaded] = useState(false);
+
+  // Saved provings (history) — each finished proving is kept so it can be reopened + re-printed.
+  const [currentId, setCurrentId] = useState<string | null>(null);
+  const [saved, setSaved] = useState<SavedCanProving[]>([]);
+  const [note, setNote] = useState<string | null>(null);
 
   // Roster (saved sites, people, provers) — loaded from the repository.
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -57,12 +72,14 @@ export default function CanProvingPage() {
 
   // Restore / autosave the draft so field entries survive a refresh.
   useEffect(() => {
+    setSaved(loadSavedProvings());
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        const d = JSON.parse(raw) as { header?: CanHeader; rows?: CanRunRow[] };
+        const d = JSON.parse(raw) as { header?: CanHeader; rows?: CanRunRow[]; currentId?: string | null };
         if (d.header) setHeader({ ...emptyHeader(), ...d.header });
         if (d.rows?.length) setRows(d.rows.map((r) => ({ ...emptyRow(), ...r })));
+        if (d.currentId) setCurrentId(d.currentId);
       }
     } catch {
       /* ignore */
@@ -72,11 +89,11 @@ export default function CanProvingPage() {
   useEffect(() => {
     if (!loaded) return;
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ header, rows }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ header, rows, currentId }));
     } catch {
       /* ignore */
     }
-  }, [header, rows, loaded]);
+  }, [header, rows, currentId, loaded]);
 
   const gravity = useMemo(() => {
     const g = parseDecimal(header.gravity);
@@ -216,6 +233,52 @@ export default function CanProvingPage() {
     return c.id;
   };
 
+  // ---- Saved provings (history) — auto-saved once a run is entered ----------
+  const hasRunData = rows.some((r) => r.tankReading.trim() !== "" && r.metered.trim() !== "");
+
+  // Persist the working proving into the saved list automatically: a record is
+  // created the moment a run has data, and every later edit updates it in place.
+  // No Save button to remember — open one, edit, it stays saved.
+  useEffect(() => {
+    if (!loaded || !hasRunData) return;
+    const id = currentId ?? newProvingId();
+    if (!currentId) setCurrentId(id);
+    setSaved((list) => {
+      const record: SavedCanProving = { id, savedAt: new Date().toISOString(), header, rows };
+      const next = list.some((p) => p.id === id)
+        ? list.map((p) => (p.id === id ? record : p)) // update in place
+        : [record, ...list]; // first save → top of the list
+      persistSavedProvings(next);
+      return next;
+    });
+  }, [header, rows, currentId, hasRunData, loaded]);
+
+  const newProving = () => {
+    setHeader(emptyHeader());
+    setRows([emptyRow(), emptyRow()]);
+    setCurrentId(null);
+    setShowCert(false);
+    setNote("Started a new proving. The previous one is saved below.");
+  };
+
+  const openSaved = (p: SavedCanProving) => {
+    setHeader({ ...emptyHeader(), ...p.header });
+    setRows(p.rows.length ? p.rows.map((r) => ({ ...emptyRow(), ...r })) : [emptyRow(), emptyRow()]);
+    setCurrentId(p.id);
+    setShowCert(false);
+    setNote("Opened — your edits save automatically.");
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const deleteSaved = (id: string) => {
+    setSaved((list) => {
+      const next = list.filter((p) => p.id !== id);
+      persistSavedProvings(next);
+      return next;
+    });
+    if (currentId === id) setCurrentId(null);
+  };
+
   const brand = {
     name: tenant.branding.displayName ?? tenant.name,
     legalName: tenant.branding.legalName,
@@ -238,14 +301,19 @@ export default function CanProvingPage() {
             Manual-entry meter proving against an open-can prover — emulates the Excel record (A–P), live.
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <CuInGalCalculator />
+          <Button variant="outline" onClick={newProving}>
+            <FilePlus className="mr-2 h-4 w-4" />
+            New proving
+          </Button>
           <Button onClick={() => setShowCert(true)} disabled={qualifying.length === 0}>
             <FileCheck2 className="mr-2 h-4 w-4" />
             Certificate
           </Button>
         </div>
       </div>
+      {note && <p className="mb-4 text-xs text-muted-foreground">{note}</p>}
 
       {/* Header / identification */}
       <Card className="mb-6">
@@ -458,7 +526,7 @@ export default function CanProvingPage() {
         </CardContent>
       </Card>
 
-      <div className="mb-2">
+      <div className="mb-6">
         <Textarea
           placeholder="Comments…"
           value={header.comments}
@@ -466,6 +534,61 @@ export default function CanProvingPage() {
           rows={2}
         />
       </div>
+
+      {/* Saved provings (history) */}
+      {saved.length > 0 && (
+        <Card className="mb-6">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base">Saved provings ({saved.length})</CardTitle>
+            <p className="text-xs text-muted-foreground">
+              Auto-saved once a run is entered. Open any to edit or re-print its certificate.
+            </p>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {saved.map((p) => {
+              const s = summarizeProving(p);
+              const title = [p.header.customer, p.header.location].filter(Boolean).join(" · ") || "Untitled proving";
+              const when = new Date(p.savedAt).toLocaleString();
+              return (
+                <div
+                  key={p.id}
+                  className={`flex items-center justify-between gap-3 rounded-lg border p-3 ${
+                    p.id === currentId ? "border-primary/50 bg-primary/[0.04]" : ""
+                  }`}
+                >
+                  <div className="min-w-0">
+                    <div className="truncate text-sm font-medium">
+                      {title}
+                      {p.id === currentId ? (
+                        <span className="ml-2 text-[10px] uppercase tracking-wide text-primary">open</span>
+                      ) : null}
+                    </div>
+                    <div className="truncate text-xs text-muted-foreground">
+                      {when}
+                      {p.header.product ? ` · ${p.header.product}` : ""} · {s.count} run{s.count === 1 ? "" : "s"}
+                      {s.mf !== null ? ` · MF ${s.mf.toFixed(4)}` : ""}
+                    </div>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-1.5">
+                    <Button variant="outline" size="sm" onClick={() => openSaved(p)}>
+                      Open
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => deleteSaved(p.id)}
+                      aria-label="Delete proving"
+                      className="text-muted-foreground hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </CardContent>
+        </Card>
+      )}
       </div>
       {/* end print:hidden editor */}
 
@@ -578,4 +701,29 @@ function Stat({
       {hint ? <div className="text-[11px] text-muted-foreground">{hint}</div> : null}
     </div>
   );
+}
+
+/** Quick aggregate for the saved-provings list: qualifying run count + average meter factor. */
+function summarizeProving(p: SavedCanProving): { mf: number | null; count: number } {
+  const gravity = parseDecimal(p.header.gravity);
+  const g = Number.isFinite(gravity) ? gravity : 0;
+  const prev = parseDecimal(p.header.previousMeterFactor);
+  const pk = Number.isFinite(prev) ? prev : 0;
+  const qual = p.rows
+    .map((r) => {
+      const A = num(r.tankReading);
+      const G = num(r.metered);
+      if (A === "" || G === "" || r.wetDown) return null;
+      return canRun({
+        tankReading: A,
+        proverTemps: [num(r.t1), num(r.t2), num(r.t3)],
+        meteredAmount: G,
+        invoiceTempF: num(r.invoiceTemp),
+        apiGravity: g,
+        presentKFactor: pk,
+      });
+    })
+    .filter((x): x is CanRunResult => x !== null);
+  if (!qual.length) return { mf: null, count: 0 };
+  return { mf: qual.reduce((s, x) => s + x.meterFactor, 0) / qual.length, count: qual.length };
 }

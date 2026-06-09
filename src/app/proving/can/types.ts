@@ -87,3 +87,38 @@ export function emptyHeader(): CanHeader {
 export function emptyRow(): CanRunRow {
   return { tankReading: "", t1: "", t2: "", t3: "", metered: "", invoiceTemp: "", flowGpm: "", wetDown: false };
 }
+
+// ---- Saved provings (history) ----------------------------------------------
+// A finished/in-progress can proving, kept so it can be reopened and re-printed.
+export interface SavedCanProving {
+  id: string;
+  savedAt: string; // ISO timestamp
+  header: CanHeader;
+  rows: CanRunRow[];
+}
+
+const PROVINGS_KEY = "can-provings-v1";
+
+export function loadSavedProvings(): SavedCanProving[] {
+  try {
+    const raw = localStorage.getItem(PROVINGS_KEY);
+    const list = raw ? (JSON.parse(raw) as SavedCanProving[]) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+export function persistSavedProvings(list: SavedCanProving[]) {
+  try {
+    localStorage.setItem(PROVINGS_KEY, JSON.stringify(list));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+export function newProvingId(): string {
+  return typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `p-${Date.now().toString(36)}-${Math.floor(Math.random() * 1e9).toString(36)}`;
+}
