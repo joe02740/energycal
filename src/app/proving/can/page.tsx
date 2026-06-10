@@ -11,7 +11,8 @@ import { Separator } from "@/components/ui/separator";
 import { SavablePicker, type PickerOption } from "@/components/ui/savable-picker";
 import { useCurrentTenant } from "@/lib/tenant/provider";
 import { getRepository } from "@/lib/data/repository";
-import type { Contact, Customer, Location, Prover } from "@/lib/data/types";
+import { useActiveUser } from "@/lib/user/activeUser";
+import type { Contact, Customer, Location, Meter, Product, Prover } from "@/lib/data/types";
 import { canRun, canRepeatability, type CanRunResult } from "@/lib/calc/can/canProving";
 import { CuInGalCalculator } from "./_components/CuInGalCalculator";
 import { CanCert } from "./_components/CanCert";
@@ -34,9 +35,11 @@ const num = (s: string): number | "" => {
 };
 const fmt = (v: number | null | undefined, dp: number) =>
   v === null || v === undefined || !Number.isFinite(v) ? "—" : v.toFixed(dp);
+const today = () => new Date().toISOString().slice(0, 10);
 
 export default function CanProvingPage() {
   const tenant = useCurrentTenant();
+  const activeUser = useActiveUser();
   const [header, setHeader] = useState<CanHeader>(emptyHeader);
   const [rows, setRows] = useState<CanRunRow[]>([emptyRow(), emptyRow()]);
   const [showCert, setShowCert] = useState(false);
@@ -47,24 +50,30 @@ export default function CanProvingPage() {
   const [saved, setSaved] = useState<SavedCanProving[]>([]);
   const [note, setNote] = useState<string | null>(null);
 
-  // Roster (saved sites, people, provers) — loaded from the repository.
+  // Roster (saved sites, people, provers, products, meters) — loaded from the repository.
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [provers, setProvers] = useState<Prover[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [meters, setMeters] = useState<Meter[]>([]);
 
   const repo = useMemo(() => getRepository(tenant.id), [tenant.id]);
   const reloadRoster = useCallback(async () => {
-    const [cs, ct, ls, pr] = await Promise.all([
+    const [cs, ct, ls, pr, pd, mt] = await Promise.all([
       repo.listCustomers(),
       repo.listContacts(),
       repo.listLocationsAll(),
       repo.listProvers(),
+      repo.listProducts(),
+      repo.listMetersAll(),
     ]);
     setCustomers(cs);
     setContacts(ct);
     setLocations(ls);
     setProvers(pr);
+    setProducts(pd);
+    setMeters(mt);
   }, [repo]);
   useEffect(() => {
     reloadRoster();
@@ -94,6 +103,19 @@ export default function CanProvingPage() {
       /* ignore */
     }
   }, [header, rows, currentId, loaded]);
+
+  // PROVEit-style defaults: date of test = today, performed by = the active
+  // profile. Fills blanks only — never overwrites a restored draft or an
+  // opened proving.
+  useEffect(() => {
+    if (!loaded) return;
+    setHeader((h) => {
+      const patch: Partial<CanHeader> = {};
+      if (h.testDate === "") patch.testDate = today();
+      if (h.performedBy.trim() === "" && activeUser) patch.performedBy = activeUser.name;
+      return Object.keys(patch).length ? { ...h, ...patch } : h;
+    });
+  }, [loaded, activeUser]);
 
   const gravity = useMemo(() => {
     const g = parseDecimal(header.gravity);
@@ -167,6 +189,21 @@ export default function CanProvingPage() {
     hint: c.organization || (c.role ? c.role.replace(/_/g, " ") : undefined),
     searchText: `${c.name} ${c.organization ?? ""}`,
   }));
+  const productOpts: PickerOption[] = products.map((p) => ({
+    value: p.id,
+    label: p.name,
+    hint: p.defaultDensityApi != null ? `${p.defaultDensityApi}°API` : p.productType,
+    searchText: `${p.name} ${p.productType ?? ""}`,
+  }));
+  // Meters offered for the selected site (PROVEit-style: pick the site, choose its meters).
+  const meterOpts: PickerOption[] = meters
+    .filter((m) => !header.locationId || m.locationId === header.locationId)
+    .map((m) => ({
+      value: m.id,
+      label: m.tag,
+      hint: [m.manufacturer, m.model, m.sizeIn != null ? `${m.sizeIn}"` : ""].filter(Boolean).join(" "),
+      searchText: `${m.tag} ${m.manufacturer ?? ""} ${m.model ?? ""}`,
+    }));
 
   const pickCustomer = (id: string | null) => {
     const c = customers.find((x) => x.id === id);
@@ -233,6 +270,139 @@ export default function CanProvingPage() {
     return c.id;
   };
 
+  const pickProduct = (id: string | null) => {
+    const p = products.find((x) => x.id === id);
+    if (!p) return setH({ productId: "", product: "" });
+    setH({
+      productId: p.id,
+      product: p.name,
+      ...(p.defaultDensityApi != null ? { gravity: String(p.defaultDensityApi) } : {}),
+    });
+  };
+  const createProduct = async (name: string) => {
+    const g = parseDecimal(header.gravity);
+    const p = await repo.createProduct({
+      name,
+      apiTableGroup: "refined_generalized",
+      defaultDensityApi: Number.isFinite(g) ? g : undefined,
+    });
+    await reloadRoster();
+    setH({ productId: p.id, product: p.name });
+    return p.id;
+  };
+
+  const pickMeter = (id: string | null) => {
+    const m = meters.find((x) => x.id === id);
+    if (!m) return setH({ meterRecordId: "" });
+    const patch: Partial<CanHeader> = {
+      meterRecordId: m.id,
+      meterId: m.tag,
+      meterMake: m.manufacturer ?? "",
+      meterModel: m.model ?? "",
+      meterSize: m.sizeIn != null ? String(m.sizeIn) : "",
+    };
+
+    // PROVEit-style history pull: this meter's most recent saved proving
+    // supplies last test date, last totalizer, previous meter factor (= that
+    // proving's NEW factor), and the product it ran.
+    const prior = loadSavedProvings()
+      .filter((p) => p.id !== currentId && (p.header.meterRecordId === m.id || p.header.meterId === m.tag))
+      .sort((a, b) => b.savedAt.localeCompare(a.savedAt))[0];
+    if (prior) {
+      const pulled: string[] = [];
+      if (prior.header.testDate) {
+        patch.lastTestDate = prior.header.testDate;
+        pulled.push(`last test ${prior.header.testDate}`);
+      }
+      if (prior.header.finishTotalizer) {
+        patch.lastTotalizer = prior.header.finishTotalizer;
+        pulled.push("last totalizer");
+      }
+      const s = summarizeProving(prior);
+      const prevK = parseDecimal(prior.header.previousMeterFactor);
+      const newMF = s.mf !== null && Number.isFinite(prevK) && prevK > 0 ? s.mf * prevK : null;
+      if (newMF !== null) {
+        patch.previousMeterFactor = newMF.toFixed(5);
+        pulled.push(`previous MF ${newMF.toFixed(4)}`);
+      }
+      const priorProduct = products.find((p) => p.id === prior.header.productId);
+      if (priorProduct) {
+        patch.productId = priorProduct.id;
+        patch.product = priorProduct.name;
+        if (prior.header.gravity) patch.gravity = prior.header.gravity;
+        pulled.push(priorProduct.name);
+      } else if (prior.header.product) {
+        patch.product = prior.header.product;
+        patch.productId = "";
+        if (prior.header.gravity) patch.gravity = prior.header.gravity;
+        pulled.push(prior.header.product);
+      }
+      if (pulled.length) setNote(`Pulled from this meter's last proving: ${pulled.join(" · ")}.`);
+    }
+    setH(patch);
+  };
+  const createMeter = async (tag: string) => {
+    const size = parseDecimal(header.meterSize);
+    const m = await repo.createMeter({
+      customerId: header.customerId,
+      locationId: header.locationId,
+      tag,
+      manufacturer: header.meterMake.trim() || undefined,
+      model: header.meterModel.trim() || undefined,
+      sizeIn: Number.isFinite(size) ? size : undefined,
+      meterType: "pd_positive_displacement",
+      nominalKFactor: 0,
+      pulseMode: "whole",
+      mfCalcMethod: "avg_meter_factor",
+      trackFactor: "meter_factor",
+      baseTempF: 60,
+      atmosphericPressurePsia: 14.696,
+    });
+    await reloadRoster();
+    setH({ meterRecordId: m.id, meterId: m.tag });
+    return m.id;
+  };
+
+  // Write-back: editing a detail field updates the entity it came from, so the
+  // roster "learns" (e.g. a site remembers its address the first time you type it).
+  const writeBackLocation = () => {
+    const l = locations.find((x) => x.id === header.locationId);
+    if (l && (l.address ?? "") !== header.address)
+      repo.updateLocation({ ...l, address: header.address.trim() || undefined }).then(reloadRoster);
+  };
+  const writeBackProduct = () => {
+    const p = products.find((x) => x.id === header.productId);
+    const g = parseDecimal(header.gravity);
+    if (p && Number.isFinite(g) && p.defaultDensityApi !== g)
+      repo.updateProduct({ ...p, defaultDensityApi: g }).then(reloadRoster);
+  };
+  const writeBackMeter = () => {
+    const m = meters.find((x) => x.id === header.meterRecordId);
+    if (!m) return;
+    const size = parseDecimal(header.meterSize);
+    const next: Meter = {
+      ...m,
+      tag: header.meterId.trim() || m.tag,
+      manufacturer: header.meterMake.trim() || undefined,
+      model: header.meterModel.trim() || undefined,
+      sizeIn: Number.isFinite(size) ? size : m.sizeIn,
+    };
+    if (next.tag !== m.tag || next.manufacturer !== m.manufacturer || next.model !== m.model || next.sizeIn !== m.sizeIn)
+      repo.updateMeter(next).then(reloadRoster);
+  };
+  const writeBackProver = () => {
+    const p = provers.find((x) => x.id === header.proverId);
+    if (!p) return;
+    const size = parseDecimal(header.proverSize);
+    const next: Prover = {
+      ...p,
+      serialNumber: header.proverSerial.trim() || undefined,
+      baseVolume: Number.isFinite(size) ? size : p.baseVolume,
+    };
+    if (next.serialNumber !== p.serialNumber || next.baseVolume !== p.baseVolume)
+      repo.updateProver(next).then(reloadRoster);
+  };
+
   // ---- Saved provings (history) — auto-saved once a run is entered ----------
   const hasRunData = rows.some((r) => r.tankReading.trim() !== "" && r.metered.trim() !== "");
 
@@ -254,7 +424,7 @@ export default function CanProvingPage() {
   }, [header, rows, currentId, hasRunData, loaded]);
 
   const newProving = () => {
-    setHeader(emptyHeader());
+    setHeader({ ...emptyHeader(), testDate: today(), performedBy: activeUser?.name ?? "" });
     setRows([emptyRow(), emptyRow()]);
     setCurrentId(null);
     setShowCert(false);
@@ -344,12 +514,29 @@ export default function CanProvingPage() {
                 addLabel={(q) => `Add site “${q}”`}
               />
             </Pf>
-            <Hf label="Address" v={header.address} on={(x) => setH({ address: x })} />
+            <Hf label="Address" v={header.address} on={(x) => setH({ address: x })} onBlur={writeBackLocation} />
             <Hf label="Cert #" v={header.certNo} on={(x) => setH({ certNo: x })} />
             <Hf label="Date of test" type="date" v={header.testDate} on={(x) => setH({ testDate: x })} />
             <Hf label="Last test date" type="date" v={header.lastTestDate} on={(x) => setH({ lastTestDate: x })} />
-            <Hf label="Product" v={header.product} on={(x) => setH({ product: x })} />
-            <Hf label="Gravity (°API)" v={header.gravity} on={(x) => setH({ gravity: x })} placeholder="35.9" numeric />
+            <Pf label="Product">
+              <SavablePicker
+                options={productOpts}
+                value={header.productId || null}
+                onChange={pickProduct}
+                onCreate={createProduct}
+                placeholder="Pick or add product"
+                searchPlaceholder="Search products…"
+                addLabel={(q) => `Add product “${q}”`}
+              />
+            </Pf>
+            <Hf
+              label="Gravity (°API)"
+              v={header.gravity}
+              on={(x) => setH({ gravity: x })}
+              onBlur={writeBackProduct}
+              placeholder="35.9"
+              numeric
+            />
             <Hf label="Throughput since" v={header.throughputSince} on={(x) => setH({ throughputSince: x })} />
             <Pf label="Performed by">
               <SavablePicker
@@ -376,10 +563,21 @@ export default function CanProvingPage() {
           </div>
           <Separator />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-            <Hf label="Meter make" v={header.meterMake} on={(x) => setH({ meterMake: x })} />
-            <Hf label="Meter model" v={header.meterModel} on={(x) => setH({ meterModel: x })} />
-            <Hf label="Meter size" v={header.meterSize} on={(x) => setH({ meterSize: x })} />
-            <Hf label="Meter ID #" v={header.meterId} on={(x) => setH({ meterId: x })} />
+            <Pf label="Meter (pick this site's meters)">
+              <SavablePicker
+                options={meterOpts}
+                value={header.meterRecordId || null}
+                onChange={pickMeter}
+                onCreate={createMeter}
+                placeholder="Pick or save meter"
+                searchPlaceholder="Search meters…"
+                addLabel={(q) => `Save meter “${q}”`}
+              />
+            </Pf>
+            <Hf label="Meter make" v={header.meterMake} on={(x) => setH({ meterMake: x })} onBlur={writeBackMeter} />
+            <Hf label="Meter model" v={header.meterModel} on={(x) => setH({ meterModel: x })} onBlur={writeBackMeter} />
+            <Hf label="Meter size" v={header.meterSize} on={(x) => setH({ meterSize: x })} onBlur={writeBackMeter} />
+            <Hf label="Meter ID #" v={header.meterId} on={(x) => setH({ meterId: x })} onBlur={writeBackMeter} />
             <Hf label="Meter seal #" v={header.meterSeal} on={(x) => setH({ meterSeal: x })} />
             <Pf label="Prover (pick to autofill)">
               <SavablePicker
@@ -392,8 +590,8 @@ export default function CanProvingPage() {
                 addLabel={(q) => `Save current as “${q}”`}
               />
             </Pf>
-            <Hf label="Prover serial #" v={header.proverSerial} on={(x) => setH({ proverSerial: x })} />
-            <Hf label="Prover size" v={header.proverSize} on={(x) => setH({ proverSize: x })} placeholder="1000 gal" />
+            <Hf label="Prover serial #" v={header.proverSerial} on={(x) => setH({ proverSerial: x })} onBlur={writeBackProver} />
+            <Hf label="Prover size" v={header.proverSize} on={(x) => setH({ proverSize: x })} onBlur={writeBackProver} placeholder="1000 gal" />
             <Hf label="Last totalizer" v={header.lastTotalizer} on={(x) => setH({ lastTotalizer: x })} />
             <Hf label="This test start" v={header.startTotalizer} on={(x) => setH({ startTotalizer: x })} />
             <Hf label="This test finish" v={header.finishTotalizer} on={(x) => setH({ finishTotalizer: x })} />
@@ -547,7 +745,9 @@ export default function CanProvingPage() {
           <CardContent className="space-y-2">
             {saved.map((p) => {
               const s = summarizeProving(p);
-              const title = [p.header.customer, p.header.location].filter(Boolean).join(" · ") || "Untitled proving";
+              const title =
+                [p.header.meterId, p.header.customer, p.header.location].filter(Boolean).join(" · ") ||
+                "Untitled proving";
               const when = new Date(p.savedAt).toLocaleString();
               return (
                 <div
@@ -637,6 +837,7 @@ function Hf({
   label,
   v,
   on,
+  onBlur,
   type,
   placeholder,
   numeric,
@@ -644,6 +845,7 @@ function Hf({
   label: string;
   v: string;
   on: (x: string) => void;
+  onBlur?: () => void;
   type?: string;
   placeholder?: string;
   numeric?: boolean;
@@ -654,6 +856,7 @@ function Hf({
       <Input
         value={v}
         onChange={(e) => on(e.target.value)}
+        onBlur={onBlur}
         type={type}
         inputMode={numeric ? "decimal" : undefined}
         placeholder={placeholder}

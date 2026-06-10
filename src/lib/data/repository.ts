@@ -46,12 +46,16 @@ export interface Repository {
   createContact(input: Omit<Contact, "id" | "companyId">): Promise<Contact>;
   createLocation(input: Omit<Location, "id" | "companyId">): Promise<Location>;
   createProver(input: Omit<Prover, "id" | "companyId">): Promise<Prover>;
+  createProduct(input: Omit<Product, "id" | "companyId">): Promise<Product>;
+  createMeter(input: Omit<Meter, "id" | "companyId">): Promise<Meter>;
 
   // Edits (overlay over seed via the dynamic store) + tombstone delete
   updateCustomer(row: Customer): Promise<Customer>;
   updateContact(row: Contact): Promise<Contact>;
   updateLocation(row: Location): Promise<Location>;
   updateProver(row: Prover): Promise<Prover>;
+  updateProduct(row: Product): Promise<Product>;
+  updateMeter(row: Meter): Promise<Meter>;
   deleteEntity(id: string): Promise<void>;
 
   // Provings
@@ -149,6 +153,16 @@ class InMemoryRepository implements Repository {
     dynamicStore.upsertProver(row);
     return row;
   }
+  async createProduct(input: Omit<Product, "id" | "companyId">) {
+    const row: Product = { ...input, id: newId("prod"), companyId: this.tenantId };
+    dynamicStore.upsertProduct(row);
+    return row;
+  }
+  async createMeter(input: Omit<Meter, "id" | "companyId">) {
+    const row: Meter = { ...input, id: newId("meter"), companyId: this.tenantId };
+    dynamicStore.upsertMeter(row);
+    return row;
+  }
 
   async updateCustomer(row: Customer) {
     dynamicStore.upsertCustomer({ ...row, companyId: this.tenantId });
@@ -164,6 +178,14 @@ class InMemoryRepository implements Repository {
   }
   async updateProver(row: Prover) {
     dynamicStore.upsertProver({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async updateProduct(row: Product) {
+    dynamicStore.upsertProduct({ ...row, companyId: this.tenantId });
+    return row;
+  }
+  async updateMeter(row: Meter) {
+    dynamicStore.upsertMeter({ ...row, companyId: this.tenantId });
     return row;
   }
   async deleteEntity(id: string) {

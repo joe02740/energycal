@@ -21,12 +21,15 @@ const PORT = process.argv[2] || 'COM6';
 const BAUD = Number(process.argv[3] || 9600);
 
 // Known commands → expected response length (from the capture).
+// NOTE: 0x35 (P5) is deliberately NOT probed — it is the LAUNCH command
+// (decoded 2026-06-09 from the Auto Run captures): the RMU acks 01 50 99 e9,
+// fires the launch output, and flips run-active (status 0x83 → 0x03).
+// Use piu-run.js to trigger it intentionally.
 const CMDS = [
   { c: 0x31, len: 4, name: 'P1' },
   { c: 0x32, len: 4, name: 'P2' },
   { c: 0x33, len: 4, name: 'P3' },
   { c: 0x34, len: 121, name: 'P4 (live data)' },
-  { c: 0x35, len: 4, name: 'P5' },
   { c: 0x36, len: 4, name: 'P6' },
   { c: 0x3b, len: 40, name: 'P; (config)' },
   { c: 0x3c, len: 9, name: 'P< (status)' },

@@ -20,7 +20,16 @@ import type {
   PiuPassCompletion,
   PiuStatus,
 } from "./controller";
-import { isValidP4, decodeP4Delta, P4_LEN, DEFAULT_ANALOG, type AnalogInput, type PiuReading } from "./piuRs232/decode";
+import {
+  isValidP4,
+  decodeP4Delta,
+  P4_LEN,
+  DEFAULT_ANALOG,
+  CMD_LAUNCH,
+  ACK_LAUNCH,
+  type AnalogInput,
+  type PiuReading,
+} from "./piuRs232/decode";
 
 export interface PiuRs232Options {
   wsUrl?: string; // serial bridge, default ws://127.0.0.1:8765
@@ -55,6 +64,7 @@ export class PiuRs232Controller implements PiuController {
   private frames: Uint8Array[] = [];
   private last: PiuReading | null = null;
   private analog: AnalogInput[];
+  private launchAck: (() => void) | null = null;
 
   private statusListeners = new Set<StatusListener>();
   private sampleListeners = new Set<SampleListener>();
@@ -155,9 +165,15 @@ export class PiuRs232Controller implements PiuController {
     this.pollTimer = setInterval(poll, this.pollMs);
   }
 
-  // Accumulate bytes and pull out 121-byte P4 frames (resyncing on 01 50 + checksum).
+  // Accumulate bytes and pull out frames: the 4-byte launch ack (01 50 99 e9)
+  // and 121-byte P4 blocks (resyncing on 01 50 + checksum).
   private ingest(bytes: Uint8Array) {
     this.acc = concat(this.acc, bytes);
+    // Launch ack can arrive interleaved with P4 polls — consume it first.
+    while (this.acc.length >= ACK_LAUNCH.length && ACK_LAUNCH.every((v, i) => this.acc[i] === v)) {
+      this.acc = this.acc.subarray(ACK_LAUNCH.length);
+      if (this.launchAck) { this.launchAck(); this.launchAck = null; }
+    }
     while (this.acc.length >= P4_LEN) {
       if (!(this.acc[0] === 0x01 && this.acc[1] === 0x50)) {
         let idx = -1;
@@ -170,7 +186,10 @@ export class PiuRs232Controller implements PiuController {
       }
       const frame = this.acc.subarray(0, P4_LEN);
       if (isValidP4(frame)) { this.onFrame(frame.slice()); this.acc = this.acc.subarray(P4_LEN); }
-      else { this.acc = this.acc.subarray(1); }
+      else if (ACK_LAUNCH.every((v, i) => this.acc[i] === v)) {
+        this.acc = this.acc.subarray(ACK_LAUNCH.length);
+        if (this.launchAck) { this.launchAck(); this.launchAck = null; }
+      } else { this.acc = this.acc.subarray(1); }
     }
   }
 
@@ -198,8 +217,31 @@ export class PiuRs232Controller implements PiuController {
     return s;
   }
 
+  /**
+   * Send the P5 launch command ("50 35") — the same single command PROVEit's
+   * Auto Run sends. The RMU acks 01 50 99 e9, fires the launch output (500 ms
+   * pulse / fwd-rev valve sequencing) and flips into run-active state
+   * (status 0x83 → 0x03). CAUTION: this MOVES THE PROVER — only trigger with
+   * the line-up made and hydraulics safe.
+   */
+  async launch(timeoutMs = 3000): Promise<void> {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      throw new Error("Not connected to the serial bridge.");
+    }
+    return new Promise<void>((resolve, reject) => {
+      const t = setTimeout(() => {
+        if (this.launchAck) { this.launchAck = null; reject(new Error("No launch ack (01 50 99 e9) from the RMU within timeout.")); }
+      }, timeoutMs);
+      this.launchAck = () => { clearTimeout(t); resolve(); };
+      this.ws!.send(CMD_LAUNCH);
+    });
+  }
+
   async runPass(): Promise<PiuPassCompletion> {
-    throw new Error("Auto run over PIU needs the meter pulse field mapped (requires a meter). Enter passes manually for now.");
+    throw new Error(
+      "Launch is decoded (use launch()), but the pulse-count field is still unmapped — " +
+      "it needs one real prove with detector hits to identify. Enter passes manually for now.",
+    );
   }
   async abort(): Promise<void> {}
   async getAnalogConfig(): Promise<Record<string, unknown>> { return {}; }

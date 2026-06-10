@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Gauge } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { TenantSwitcher } from "./tenant-switcher";
+import { UserSwitcher } from "./user-switcher";
 import { BackButton } from "./back-button";
 
 export function AppHeader() {
@@ -56,6 +57,7 @@ export function AppHeader() {
             PIU Diagnostics
           </Link>
           <div className="ml-2 flex items-center gap-1">
+            <UserSwitcher />
             <TenantSwitcher />
             <ThemeToggle />
           </div>

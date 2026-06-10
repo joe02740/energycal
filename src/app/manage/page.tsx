@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Trash2, Users, Building2, MapPin, Gauge, Download, Upload } from "lucide-react";
+import { Plus, Trash2, Users, Building2, MapPin, Gauge, Download, Upload, Droplets, Activity } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,14 +9,17 @@ import { Label } from "@/components/ui/label";
 import { useCurrentTenant } from "@/lib/tenant/provider";
 import { getRepository } from "@/lib/data/repository";
 import { dynamicStore } from "@/lib/data/store";
-import type { Contact, ContactRole, Customer, Location, Prover, ProverType } from "@/lib/data/types";
+import { loadSavedProvings, persistSavedProvings, type SavedCanProving } from "@/app/proving/can/types";
+import type { Contact, ContactRole, Customer, Location, Meter, Product, Prover, ProverType } from "@/lib/data/types";
 
-type Tab = "people" | "customers" | "sites" | "provers";
+type Tab = "people" | "customers" | "sites" | "meters" | "provers" | "products";
 const TABS: { key: Tab; label: string; icon: typeof Users }[] = [
   { key: "people", label: "People", icon: Users },
   { key: "customers", label: "Customers", icon: Building2 },
   { key: "sites", label: "Sites", icon: MapPin },
+  { key: "meters", label: "Meters", icon: Activity },
   { key: "provers", label: "Provers", icon: Gauge },
+  { key: "products", label: "Products", icon: Droplets },
 ];
 
 const selectClass =
@@ -31,18 +34,24 @@ export default function ManagePage() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [locations, setLocations] = useState<Location[]>([]);
   const [provers, setProvers] = useState<Prover[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [meters, setMeters] = useState<Meter[]>([]);
 
   const reload = useCallback(async () => {
-    const [cs, ct, ls, pr] = await Promise.all([
+    const [cs, ct, ls, pr, pd, mt] = await Promise.all([
       repo.listCustomers(),
       repo.listContacts(),
       repo.listLocationsAll(),
       repo.listProvers(),
+      repo.listProducts(),
+      repo.listMetersAll(),
     ]);
     setCustomers(cs.sort(byName));
     setContacts(ct.sort(byName));
     setLocations(ls.sort(byName));
     setProvers(pr.sort((a, b) => a.tag.localeCompare(b.tag)));
+    setProducts(pd.sort(byName));
+    setMeters(mt.sort((a, b) => a.tag.localeCompare(b.tag)));
   }, [repo]);
   useEffect(() => {
     reload();
@@ -56,12 +65,22 @@ export default function ManagePage() {
   // Roster portability (move to another machine — localStorage doesn't travel).
   const fileRef = useRef<HTMLInputElement>(null);
   const [note, setNote] = useState<string | null>(null);
+  // Export bundles BOTH the roster and the saved can provings, so one file
+  // hands everything to another tech / machine. Import accepts this bundle or
+  // a legacy roster-only file; both merge by id (never wipes existing data).
   const exportRoster = () => {
-    const blob = new Blob([dynamicStore.exportAll()], { type: "application/json" });
+    const payload = {
+      kind: "energycal-export",
+      version: 2,
+      exportedAt: new Date().toISOString(),
+      roster: JSON.parse(dynamicStore.exportAll()) as unknown,
+      canProvings: loadSavedProvings(),
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `energycal-roster-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `energycal-export-${new Date().toISOString().slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -69,12 +88,34 @@ export default function ManagePage() {
   };
   const importRoster = async (file: File) => {
     try {
-      const counts = dynamicStore.importAll(await file.text());
+      const parsed = JSON.parse(await file.text()) as {
+        kind?: string;
+        roster?: unknown;
+        canProvings?: SavedCanProving[];
+      };
+      const rosterJson = parsed.kind === "energycal-export" ? JSON.stringify(parsed.roster ?? {}) : JSON.stringify(parsed);
+      const counts = dynamicStore.importAll(rosterJson);
+      let provingCount = 0;
+      if (Array.isArray(parsed.canProvings)) {
+        const existing = loadSavedProvings();
+        const byId = new Map(existing.map((p) => [p.id, p]));
+        for (const p of parsed.canProvings) {
+          if (p && typeof p.id === "string") {
+            byId.set(p.id, p);
+            provingCount++;
+          }
+        }
+        persistSavedProvings(
+          [...byId.values()].sort((a, b) => (b.savedAt ?? "").localeCompare(a.savedAt ?? "")),
+        );
+      }
       await reload();
       const total = Object.values(counts).reduce((s, n) => s + n, 0);
-      setNote(`Imported ${total} record${total === 1 ? "" : "s"}.`);
+      setNote(
+        `Imported ${total} roster record${total === 1 ? "" : "s"}${provingCount ? ` and ${provingCount} proving${provingCount === 1 ? "" : "s"}` : ""}.`,
+      );
     } catch {
-      setNote("Import failed — not a valid roster file.");
+      setNote("Import failed — not a valid export file.");
     }
   };
 
@@ -84,7 +125,7 @@ export default function ManagePage() {
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Manage roster</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            People, customers, sites, and provers — edits autosave and feed the pickers everywhere.
+            People, customers, sites, meters, provers, and products — edits autosave and feed the pickers everywhere.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -124,7 +165,7 @@ export default function ManagePage() {
               <Icon className="h-4 w-4" />
               {t.label}
               <span className="ml-1 rounded bg-muted px-1.5 text-xs tabular-nums text-muted-foreground">
-                {t.key === "people" ? contacts.length : t.key === "customers" ? customers.length : t.key === "sites" ? locations.length : provers.length}
+                {{ people: contacts.length, customers: customers.length, sites: locations.length, meters: meters.length, provers: provers.length, products: products.length }[t.key]}
               </span>
             </button>
           );
@@ -134,7 +175,9 @@ export default function ManagePage() {
       {tab === "people" && <PeopleSection contacts={contacts} repo={repo} reload={reload} del={del} />}
       {tab === "customers" && <CustomersSection customers={customers} repo={repo} reload={reload} del={del} />}
       {tab === "sites" && <SitesSection locations={locations} customers={customers} repo={repo} reload={reload} del={del} />}
+      {tab === "meters" && <MetersSection meters={meters} locations={locations} repo={repo} reload={reload} del={del} />}
       {tab === "provers" && <ProversSection provers={provers} repo={repo} reload={reload} del={del} />}
+      {tab === "products" && <ProductsSection products={products} repo={repo} reload={reload} del={del} />}
     </main>
   );
 }
@@ -355,6 +398,112 @@ function ProversSection({ provers, repo, reload, del }: { provers: Prover[]; rep
             >
               {PROVER_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>{t.label}</option>
+              ))}
+            </select>
+          </Field>
+        </RowShell>
+      ))}
+    </SectionShell>
+  );
+}
+
+// ---- Products --------------------------------------------------------------
+function ProductsSection({ products, repo, reload, del }: { products: Product[]; repo: Repo; reload: () => Promise<void>; del: (id: string) => void }) {
+  const [local, setLocal] = useState(products);
+  useEffect(() => setLocal(products), [products]);
+
+  const add = async () => {
+    await repo.createProduct({ name: "New product", apiTableGroup: "refined_generalized" });
+    await reload();
+  };
+  const patch = (p: Product, x: Partial<Product>) => setLocal((l) => l.map((y) => (y.id === p.id ? { ...y, ...x } : y)));
+  const commit = (p: Product) => repo.updateProduct(p);
+
+  return (
+    <SectionShell title="Products" onAdd={add}>
+      {empty(local, "products")}
+      {local.map((p) => (
+        <RowShell key={p.id} onDelete={() => del(p.id)}>
+          <Field label="Name" className="col-span-2">
+            <Input value={p.name} onChange={(e) => patch(p, { name: e.target.value })} onBlur={() => commit(p)} placeholder="#6 Oil" />
+          </Field>
+          <Field label="Default gravity (°API)">
+            <Input
+              value={p.defaultDensityApi != null ? String(p.defaultDensityApi) : ""}
+              inputMode="decimal"
+              onChange={(e) => patch(p, { defaultDensityApi: e.target.value === "" ? undefined : parseFloat(e.target.value) })}
+              onBlur={() => commit(p)}
+            />
+          </Field>
+          <Field label="Category">
+            <Input value={p.productType ?? ""} onChange={(e) => patch(p, { productType: e.target.value })} onBlur={() => commit(p)} placeholder="Fuel oil" />
+          </Field>
+        </RowShell>
+      ))}
+    </SectionShell>
+  );
+}
+
+// ---- Meters ----------------------------------------------------------------
+function MetersSection({ meters, locations, repo, reload, del }: { meters: Meter[]; locations: Location[]; repo: Repo; reload: () => Promise<void>; del: (id: string) => void }) {
+  const [local, setLocal] = useState(meters);
+  useEffect(() => setLocal(meters), [meters]);
+
+  const add = async () => {
+    const loc = locations[0];
+    await repo.createMeter({
+      customerId: loc?.customerId ?? "",
+      locationId: loc?.id ?? "",
+      tag: "New meter",
+      meterType: "pd_positive_displacement",
+      nominalKFactor: 0,
+      pulseMode: "whole",
+      mfCalcMethod: "avg_meter_factor",
+      trackFactor: "meter_factor",
+      baseTempF: 60,
+      atmosphericPressurePsia: 14.696,
+    });
+    await reload();
+  };
+  const patch = (m: Meter, x: Partial<Meter>) => setLocal((l) => l.map((y) => (y.id === m.id ? { ...y, ...x } : y)));
+  const commit = (m: Meter) => repo.updateMeter(m);
+
+  return (
+    <SectionShell title="Meters" onAdd={add}>
+      {empty(local, "meters")}
+      {local.map((m) => (
+        <RowShell key={m.id} onDelete={() => del(m.id)}>
+          <Field label="ID # / tag">
+            <Input value={m.tag} onChange={(e) => patch(m, { tag: e.target.value })} onBlur={() => commit(m)} />
+          </Field>
+          <Field label="Make">
+            <Input value={m.manufacturer ?? ""} onChange={(e) => patch(m, { manufacturer: e.target.value })} onBlur={() => commit(m)} />
+          </Field>
+          <Field label="Model">
+            <Input value={m.model ?? ""} onChange={(e) => patch(m, { model: e.target.value })} onBlur={() => commit(m)} />
+          </Field>
+          <Field label='Size (")'>
+            <Input
+              value={m.sizeIn != null ? String(m.sizeIn) : ""}
+              inputMode="decimal"
+              onChange={(e) => patch(m, { sizeIn: e.target.value === "" ? undefined : parseFloat(e.target.value) })}
+              onBlur={() => commit(m)}
+            />
+          </Field>
+          <Field label="Site" className="col-span-4">
+            <select
+              className={selectClass}
+              value={m.locationId}
+              onChange={(e) => {
+                const locationId = e.target.value;
+                const customerId = locations.find((l) => l.id === locationId)?.customerId ?? "";
+                patch(m, { locationId, customerId });
+                repo.updateMeter({ ...m, locationId, customerId });
+              }}
+            >
+              <option value="">— unassigned —</option>
+              {locations.map((l) => (
+                <option key={l.id} value={l.id}>{l.name}</option>
               ))}
             </select>
           </Field>

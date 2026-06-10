@@ -23,12 +23,14 @@ export interface CanHeader {
   locationId: string;
   address: string;
   product: string;
+  productId: string; // selected product record, "" if free
   gravity: string; // °API
   throughputSince: string;
+  meterRecordId: string; // selected meter record, "" if free
   meterMake: string;
   meterModel: string;
   meterSize: string;
-  meterId: string;
+  meterId: string; // the physical meter's ID # (also used as the saved meter's tag)
   meterSeal: string;
   previousMeterFactor: string; // the meter's currently-loaded factor (O); new factor is derived from it
   lastTotalizer: string;
@@ -64,8 +66,10 @@ export function emptyHeader(): CanHeader {
     locationId: "",
     address: "",
     product: "",
+    productId: "",
     gravity: "",
     throughputSince: "",
+    meterRecordId: "",
     meterMake: "",
     meterModel: "",
     meterSize: "",

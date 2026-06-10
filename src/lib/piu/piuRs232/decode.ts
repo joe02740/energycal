@@ -15,9 +15,35 @@ export const P4_LEN = 121;
 export const COUNTER_OFFSET = 56;
 export const FIELD_OFFSETS = [60, 68, 76, 84, 92, 100] as const;
 
+// ── Run-control layer (decoded 2026-06-09 from the two Auto Run captures) ─────
+// PROVEit's Auto Run sends a single "50 35" (P5) = LAUNCH. The RMU acks with
+// 01 50 99 e9, fires DIGOUT1 (500 ms launch pulse / fwd-rev sequencing), clears
+// the frequency fields, and flips P4[6] bit7: 0x83 idle → 0x03 run-active.
+// Reproduced identically in proveit-capture.pcapng @110.38s and capture2 @134.65s.
+export const CMD_POLL_P4 = Uint8Array.from([0x50, 0x34]);
+export const CMD_LAUNCH = Uint8Array.from([0x50, 0x35]);
+export const ACK_LAUNCH = Uint8Array.from([0x01, 0x50, 0x99, 0xe9]);
+
+export const STATUS_OFFSET = 6; // also at byte 6 of the 9-byte "50 3c" status poll
+export const PERIOD1_OFFSET = 16; // uint32 LE — pulse channel 1 period (ticks)
+export const PERIOD2_OFFSET = 24; // uint32 LE — pulse channel 2 period (ticks)
+export const FREQ_HZ_OFFSET = 28; // uint32 LE — integer frequency in Hz
+
+// PROVISIONAL tick rate: idle captures show period ≈ 640,227 ticks alongside
+// freq-Hz ≈ 62 (mains noise on the floating input) → 640227 × 25 ns = 16.006 ms
+// = 62.48 Hz. 40 MHz fits; confirm against a known meter frequency in the field.
+export const PIU_TICK_HZ = 40_000_000;
+
 function u32le(b: Uint8Array, o: number): number {
   return (b[o] | (b[o + 1] << 8) | (b[o + 2] << 16) | (b[o + 3] << 24)) >>> 0;
 }
+
+export const statusOf = (b: Uint8Array): number => b[STATUS_OFFSET];
+/** Bit 7 of the status byte is SET while idle and CLEARED after a P5 launch. */
+export const runActiveOf = (b: Uint8Array): boolean => (b[STATUS_OFFSET] & 0x80) === 0;
+export const periodsOf = (b: Uint8Array): [number, number] => [u32le(b, PERIOD1_OFFSET), u32le(b, PERIOD2_OFFSET)];
+export const freqHzOf = (b: Uint8Array): number => u32le(b, FREQ_HZ_OFFSET);
+export const periodToHz = (ticks: number): number => (ticks > 0 ? PIU_TICK_HZ / ticks : 0);
 
 export function isValidP4(b: Uint8Array): boolean {
   if (b.length !== P4_LEN || b[0] !== 0x01 || b[1] !== 0x50) return false;
@@ -63,11 +89,14 @@ export interface PiuReading {
   Pp?: number;
   Tm?: number;
   Pm?: number;
-  // ── Reserved — populated once captured from a real prove (flip-a-switch): ──
-  frequencyHz?: number;
+  // ── Run-layer fields (decoded from the Auto Run captures) ──────────────────
+  frequencyHz?: number; // integer Hz from P4[28..31]
+  periodHz?: number; // higher-resolution Hz derived from P4[16..19] period ticks
+  proverState?: number; // raw status byte: 0x83 idle, 0x03 run-active
+  runActive?: boolean; // bit7 of status cleared after launch
+  // Still unmapped (needs a real prove with detector hits):
   pulses?: number;
   detectorClosed?: boolean;
-  proverState?: number;
 }
 
 /** Instantaneous reading from two P4 frames + an analog config. */
@@ -91,5 +120,13 @@ export function decodeP4Delta(
     if (m === undefined) continue;
     named[inp.source] = scaleInput(m, inp);
   }
+
+  // Run layer: status + frequency straight from the newest frame.
+  out.proverState = statusOf(f1);
+  out.runActive = runActiveOf(f1);
+  out.frequencyHz = freqHzOf(f1);
+  const [p1] = periodsOf(f1);
+  if (p1 > 0) out.periodHz = periodToHz(p1);
+
   return out;
 }
