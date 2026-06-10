@@ -13,13 +13,18 @@ One serial cable = one master. While PROVEit runs the prove, USBPcap on the HP
 is the only window into the traffic. `piu-run.js` is only for time ALONE with
 the prover (optional bonus, not required).
 
-## Night-before checklist (at home, 10 min)
+## Night-before checklist (at home, ~30 min)
 - [ ] HP: Wireshark still opens, **USBPcap interfaces** listed in the capture list
       (installed 6/5 — verify it survived updates; reinstall needs a reboot).
+- [ ] HP: **install the dev setup** — git + Node + Claude Code + this repo, so
+      analysis (and a possible Energy Cal run) happens on-site on the same
+      machine as the COM port. Steps: **WORK-LAPTOP-SETUP.md** (15 min).
+- [ ] HP: smoke test → `node serial-bridge/decode-prove.js proveit-capture.pcapng`
+      prints "no monotonic counter found" = toolchain good.
 - [ ] HP: disk space for a ~50–100 MB capture.
 - [ ] Phone charged (screenshots are half the mission).
-- [ ] Laptop: stick bundle copied over (`Start Energy Cal.bat` runs), in case you
-      want the can page / cu-in calculator on site.
+- [ ] Note from PROVEit setup pages: meter **K-factor** + prover **base volume**
+      (decode-prove.js uses them to confirm the pulse field by arithmetic).
 
 ## At the prover — capture procedure
 1. ATEN cable on the HP, PROVEit open but **NOT connected yet**.
@@ -41,14 +46,21 @@ During/after the prove, photograph or snip:
 - [ ] **Results page** — final MF/CMF, repeatability %, run acceptance
 - [ ] Analog Config screen if you open it (zero/span/offset per channel)
 
-## Optional bonus — only if you get the prover to yourself
-```
-node serial-bridge/bridge.js   ← NOT needed; instead:
-node serial-bridge/piu-run.js COM6 9600
-```
-Live state/frequency display; logs everything to `captures/`. Press `l` twice to
-fire a launch **only with the line-up made** — it physically moves the prover.
-**Never hook our laptop while PROVEit is connected** (bus has one master).
+## The "room on the truck" play — our own run, same machine
+After PROVEit's official runs are accepted and saved:
+1. Analyze the capture right there:
+   `node serial-bridge/decode-prove.js butane-prove.pcapng --kfactor <K> --provervol <gal>`
+   → it prints the `pulseOffset` drop-in line (or open `claude` and ask).
+2. Disconnect PROVEit (frees the COM port — same cable, same machine).
+3. `node serial-bridge/piu-run.js COM? 9600` → live state/freq display.
+4. Tell the operator "one more run" → press `l` twice (confirm-guarded launch =
+   same action as Auto Run) → watch the pass; the pulse counter announces
+   itself live; everything logs to `captures/`.
+5. With `pulseOffset` set, the app's `runPass()` does the whole pass itself —
+   a full Energy Cal auto-run with live product, validated against PROVEit's
+   numbers from an hour earlier.
+
+**Rule: one master.** Our tools touch the port only when PROVEit is disconnected.
 
 ## What happens after Monday
 - Pulse field identified from the capture → `runPass()` → Energy Cal runs full
